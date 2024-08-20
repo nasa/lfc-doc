@@ -1,0 +1,525 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>cli: Command-line interface to lfc &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="lfcrepo: Interface to git repos with large-file control" href="lfcrepo.html" />
+    <link rel="prev" title="lfc: A git extension to track large files" href="lfc.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lfcrepo.html" title="lfcrepo: Interface to git repos with large-file control"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lfc.html" title="lfc: A git extension to track large files"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lfc.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">cli</span></code>: Command-line interface to <code class="docutils literal notranslate"><span class="pre">lfc</span></code></a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-lfc.cli"></span><section id="cli-command-line-interface-to-lfc">
+<h1><code class="docutils literal notranslate"><span class="pre">cli</span></code>: Command-line interface to <code class="docutils literal notranslate"><span class="pre">lfc</span></code><a class="headerlink" href="#cli-command-line-interface-to-lfc" title="Permalink to this heading">¶</a></h1>
+<p>This module provides several functions that are the main user interface
+to LFC. There is a function <a class="reference internal" href="#lfc.cli.main" title="lfc.cli.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">main()</span></code></a> that reads <code class="docutils literal notranslate"><span class="pre">sys.argv</span></code> (the
+command-line strings of the current command). Then <a class="reference internal" href="#lfc.cli.main" title="lfc.cli.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">main()</span></code></a>
+dispatches one of several other functions, for example</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">lfc_clone()</span></code></p></li>
+<li><p><a class="reference internal" href="#lfc.cli.lfc_init" title="lfc.cli.lfc_init"><code class="xref py py-func docutils literal notranslate"><span class="pre">lfc_init()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc.cli.lfc_add" title="lfc.cli.lfc_add"><code class="xref py py-func docutils literal notranslate"><span class="pre">lfc_add()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc.cli.lfc_pull" title="lfc.cli.lfc_pull"><code class="xref py py-func docutils literal notranslate"><span class="pre">lfc_pull()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc.cli.lfc_push" title="lfc.cli.lfc_push"><code class="xref py py-func docutils literal notranslate"><span class="pre">lfc_push()</span></code></a></p></li>
+</ul>
+</div></blockquote>
+<p>These secondary commands read Python argumennts and keyword arguments
+rather than parsing <code class="docutils literal notranslate"><span class="pre">sys.argv</span></code>, so they are usable to Python API
+programmers as well.</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc.cli.LFCArgParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">LFCArgParser</span></span><a class="headerlink" href="#lfc.cli.LFCArgParser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_add">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate metadata for large file(s) and cache them</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_add</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_add</span><span class="p">(</span><span class="n">pat1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_add</span><span class="p">(</span><span class="n">pat1</span><span class="p">,</span> <span class="n">pat2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>pat1</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of large file or file name pattern</p>
+</dd>
+<dt><em>pat2</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Second file name or file name pattern</p>
+</dd>
+<dt><em>mode</em>: {<code class="docutils literal notranslate"><span class="pre">1</span></code>} | <code class="docutils literal notranslate"><span class="pre">2</span></code></dt><dd><p>LFC mode for each added file</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_autopull">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_autopull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_autopull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pull most recent version of mode-2 (configurable) LFC files</p>
+<p>Normally this will pull all mode-2 files, but that can be configured
+to all files or no files by setting <code class="docutils literal notranslate"><span class="pre">core.autopull</span></code> in
+<code class="docutils literal notranslate"><span class="pre">.lfc/config</span></code>. Users may also limit the pull to specific files,
+but that is not the primary use case.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_autopull</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_autopull</span><span class="p">(</span><span class="n">pat1</span><span class="p">,</span> <span class="n">pat2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>pat1</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of large file or file name pattern</p>
+</dd>
+<dt><em>pat2</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Second file name or file name pattern</p>
+</dd>
+<dt><em>quiet</em>: {<code class="docutils literal notranslate"><span class="pre">True</span></code>} | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Option to suppress STDOUT for files already up-to-date</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_autopush">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_autopush</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_autopush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push most recent version of mode-2 (configurable) LFC files</p>
+<p>Normally this will push all mode-2 files, but that can be configured
+to all files or no files by setting <code class="docutils literal notranslate"><span class="pre">core.autopull</span></code> in
+<code class="docutils literal notranslate"><span class="pre">.lfc/config</span></code>. Users may also limit the push to specific files,
+but that is not the primary use case.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_autopush</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_autopush</span><span class="p">(</span><span class="n">pat1</span><span class="p">,</span> <span class="n">pat2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>pat1</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of large file or file name pattern</p>
+</dd>
+<dt><em>pat2</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Second file name or file name pattern</p>
+</dd>
+<dt><em>quiet</em>: {<code class="docutils literal notranslate"><span class="pre">True</span></code>} | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Option to suppress STDOUT for files already up-to-date</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_checkout">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_checkout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_checkout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check out one or more large files (from local cache)</p>
+<p>If no patterns are specified, the target will be all large files
+that are in the current folder or children thereof.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_checkout</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_checkout</span><span class="p">(</span><span class="n">pat1</span><span class="p">,</span> <span class="n">pat2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>pat1</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of large file or file name pattern</p>
+</dd>
+<dt><em>pat2</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Second file name or file name pattern</p>
+</dd>
+<dt><em>f</em>, <em>force</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | {<code class="docutils literal notranslate"><span class="pre">False</span></code>}</dt><dd><p>Delete uncached working file if present</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_config">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print or set an LFC configuration variable</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_config</span><span class="p">(</span><span class="n">cmdname</span><span class="p">,</span> <span class="n">fullopt</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_config</span><span class="p">(</span><span class="n">cmdname</span><span class="p">,</span> <span class="n">fullopt</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cmdname</em>: <code class="docutils literal notranslate"><span class="pre">&quot;get&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;set&quot;</span></code></dt><dd><p>LFC configuration operation to take</p>
+</dd>
+<dt><em>fullopt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Full option name, <code class="docutils literal notranslate"><span class="pre">&quot;{sec}.{opt}&quot;</span></code></p>
+</dd>
+<dt><em>val</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value to set if <em>cmdname</em> is <code class="docutils literal notranslate"><span class="pre">&quot;set&quot;</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_init">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a repo as an LFC repo</p>
+<p>This will create (if necessary) the following folders:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.lfc/</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.lfc/cache/</span></code></p></li>
+</ul>
+<p>and the following files:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.lfc/config</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.lfc/.gitignore</span></code></p></li>
+</ul>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_init</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_install_hooks">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_install_hooks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_install_hooks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Install git-hooks in current LFC repo</p>
+<p>This creates the following files relative to the top-level folder
+of the working repository:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.git/hooks/post-merge</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.git/hooks/pre-push</span></code></p></li>
+</ul>
+<p>If the files exist, this will not overwrite them. After writing the
+file, it also makes the executable.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_install_hooks</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_ls_files">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_ls_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_ls_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>List files tracked by LFC</p>
+<p>If called from a working repository, only files in the current
+folder or a subfolder thereof are listed.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_ls_files</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_ls_files</span><span class="p">(</span><span class="o">*</span><span class="n">pats</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>pats</em>: <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>(Optional) list of file name patterns to use</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">STDOUT<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Each matching <code class="docutils literal notranslate"><span class="pre">*.lfc</span></code> file is printed to a line in STDOUT</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_pull">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_pull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pull (fetch and checkout) one or more large files</p>
+<p>If no patterns are specified, the target will be all large files
+that are in the current folder or children thereof.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_pull</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_pull</span><span class="p">(</span><span class="n">pat1</span><span class="p">,</span> <span class="n">pat2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>pat1</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of large file or file name pattern</p>
+</dd>
+<dt><em>pat2</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Second file name or file name pattern</p>
+</dd>
+<dt><em>mode</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">1</span></code> | <code class="docutils literal notranslate"><span class="pre">2</span></code></dt><dd><p>Optionally only pull files of a specified mode</p>
+</dd>
+<dt><em>quiet</em>: {<code class="docutils literal notranslate"><span class="pre">True</span></code>} | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Option to suppress STDOUT for files already up-to-date</p>
+</dd>
+<dt><em>f</em>, <em>force</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | {<code class="docutils literal notranslate"><span class="pre">False</span></code>}</dt><dd><p>Delete uncached working file if present</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_push">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_push</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_push" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push one or more large files</p>
+<p>If no patterns are specified, the target will be all large files
+that are in the current folder or children thereof.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_push</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_push</span><span class="p">(</span><span class="n">pat1</span><span class="p">,</span> <span class="n">pat2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>pat1</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of large file or file name pattern</p>
+</dd>
+<dt><em>pat2</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Second file name or file name pattern</p>
+</dd>
+<dt><em>mode</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">1</span></code> | <code class="docutils literal notranslate"><span class="pre">2</span></code></dt><dd><p>Optionally only push files of a specified mode</p>
+</dd>
+<dt><em>quiet</em>: {<code class="docutils literal notranslate"><span class="pre">True</span></code>} | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Option to suppress STDOUT for files already up-to-date</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_remote">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_remote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_remote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show or set URL to an LFC remote cache</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_remote</span><span class="p">(</span><span class="n">cmdname</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_remote</span><span class="p">(</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_remote</span><span class="p">(</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="n">remote</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cmdname</em>: <code class="docutils literal notranslate"><span class="pre">&quot;list&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;set-url&quot;</span></code></dt><dd><p>Name of LFC action to take</p>
+</dd>
+<dt><em>remote</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of LFC remote</p>
+</dd>
+<dt><em>url</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path to remote cache (local or SSH)</p>
+</dd>
+<dt><em>d</em>, <em>default</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | {<code class="docutils literal notranslate"><span class="pre">False</span></code>}</dt><dd><p>Set <em>remote</em> as the default LFC remote</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_replace_dvc">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_replace_dvc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_replace_dvc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace any DVC settings and file names</p>
+<p>This will rename some files and folders:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.dvc/</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">.lfc/</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">*.dvc</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">*.lfc</span></code></p></li>
+</ul>
+</div></blockquote>
+<p>It will also delete some JSON files used by DVC if present.</p>
+<p>The function is safe to call multiple times if DVC has been
+partially replaced. If there are no DVC artifacts, this function
+will take no action.</p>
+<p>It does <strong>not</strong> recompute hashes. If any existing MD-5 hashes are
+present, LFC will continue to use them, but updating the file
+(using <code class="docutils literal notranslate"><span class="pre">lfc</span> <span class="pre">add</span></code>) will still use a SHA-256 hash.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_replace_dvc</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_set_mode">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_set_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_set_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the mode of one or more LFC files</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_set_mode</span><span class="p">(</span><span class="o">*</span><span class="n">pats</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>pat1</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of large file or file name pattern</p>
+</dd>
+<dt><em>pat2</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Second file name or file name pattern</p>
+</dd>
+<dt><em>mode</em>: <code class="docutils literal notranslate"><span class="pre">1</span></code> | <code class="docutils literal notranslate"><span class="pre">2</span></code></dt><dd><p>Required LFC mode to set for each file matching any <em>pat</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.lfc_show">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">lfc_show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.cli.lfc_show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print contents of a large file to STDOUT, even in bare repo</p>
+<p>This function does not decode the bytes so that binary files can be
+piped from bare repos through STDOUT.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfc_show</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;HEAD&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of original file or large file stub</p>
+</dd>
+<dt><em>ref</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Optional git reference (default <code class="docutils literal notranslate"><span class="pre">HEAD</span></code> on bare repo)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.cli.main">
+<span class="sig-prename descclassname"><span class="pre">lfc.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc.cli.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main command-line interface to <code class="docutils literal notranslate"><span class="pre">lfc</span></code></p>
+<p>The function works by reading the second word of <code class="docutils literal notranslate"><span class="pre">sys.argv</span></code> and
+dispatching a dedicated function for that purpose.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ierr</span> <span class="o">=</span> <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><p>(read from <code class="docutils literal notranslate"><span class="pre">sys.argv</span></code>)</p>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>ierr</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="lfc.html"
+                          title="previous chapter"><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="lfcrepo.html"
+                          title="next chapter"><code class="docutils literal notranslate"><span class="pre">lfcrepo</span></code>: Interface to git repos with large-file control</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/cli.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lfcrepo.html" title="lfcrepo: Interface to git repos with large-file control"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lfc.html" title="lfc: A git extension to track large files"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lfc.html" ><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">cli</span></code>: Command-line interface to <code class="docutils literal notranslate"><span class="pre">lfc</span></code></a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>

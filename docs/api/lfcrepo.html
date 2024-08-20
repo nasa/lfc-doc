@@ -1,0 +1,1342 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>lfcrepo: Interface to git repos with large-file control &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="lfcclone: Command-line interface for lfc-clone" href="lfcclone.html" />
+    <link rel="prev" title="cli: Command-line interface to lfc" href="cli.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lfcclone.html" title="lfcclone: Command-line interface for lfc-clone"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cli.html" title="cli: Command-line interface to lfc"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lfc.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">lfcrepo</span></code>: Interface to git repos with large-file control</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-lfc.lfcrepo"></span><section id="lfcrepo-interface-to-git-repos-with-large-file-control">
+<h1><code class="docutils literal notranslate"><span class="pre">lfcrepo</span></code>: Interface to git repos with large-file control<a class="headerlink" href="#lfcrepo-interface-to-git-repos-with-large-file-control" title="Permalink to this heading">¶</a></h1>
+<p>This module provides the <a class="reference internal" href="#lfc.lfcrepo.LFCRepo" title="lfc.lfcrepo.LFCRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">LFCRepo</span></code></a>, which provides tools for
+interacting with Git repositories. This includes actions to hash, store,
+and transfer large files tracked with <code class="docutils literal notranslate"><span class="pre">lfc</span></code>.</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc.lfcrepo.</span></span><span class="sig-name descname"><span class="pre">LFCRepo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo" title="Permalink to this definition">¶</a></dt>
+<dd><p>LFC interface to individual repositories</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span> <span class="o">=</span> <span class="n">LFCRepo</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>where</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Location of repo (<code class="docutils literal notranslate"><span class="pre">None</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">os.getcwd()</span></code>)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.bare">
+<span class="sig-name descname"><span class="pre">bare</span></span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.bare" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code> –
+Whether this instance is in a bare repository</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.check_cache">
+<span class="sig-name descname"><span class="pre">check_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flfc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.check_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if large file is in local cache</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">status</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">check_cache</span><span class="p">(</span><span class="n">flfc</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>status</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Whether file is present in local cache</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-28 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.close_lfc_portal">
+<span class="sig-name descname"><span class="pre">close_lfc_portal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remote</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.close_lfc_portal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close large file transfer portal, if any</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">close_lfc_portal</span><span class="p">(</span><span class="n">remote</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>remote</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote, or default</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-20 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2023-10-26 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; multiple portals</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.find_lfc_files">
+<span class="sig-name descname"><span class="pre">find_lfc_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#list" title="list"><span class="pre">list</span></a></span></span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.find_lfc_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all large file stubs</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfcfiles</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">find_lfc_files</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>pattern</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Pattern to restrict search of large file stubs</p>
+</dd>
+<dt><em>ext</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">&quot;.lfc&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;.dvc&quot;</span></code></dt><dd><p>Optional manual working stub extension to use</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>lfcfiles</em>: <a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of large file stubs, each ending with <em>ext</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-20 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2022-12-28 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; bug fix for empty result</p></li>
+<li><dl class="simple">
+<dt>2023-10-26 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v2.0</dt><dd><ul>
+<li><p>use <code class="docutils literal notranslate"><span class="pre">ls_tree()</span></code> instead of calling <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">ls-files</span></code></p></li>
+<li><p>works with <code class="docutils literal notranslate"><span class="pre">lfc</span> <span class="pre">add</span> <span class="pre">data/</span></code> or similar</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>2023-11-08 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v2.1; add <em>mode</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.genr8_hash">
+<span class="sig-name descname"><span class="pre">genr8_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.genr8_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate SHA-256 hex digest of a file</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hexhash</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">genr8_hash</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file to hash</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>hexhash</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>SHA-256 hex digest of file’s bytes</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-28 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.genr8_lfc_filename">
+<span class="sig-name descname"><span class="pre">genr8_lfc_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.genr8_lfc_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce name of large file stub</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">flfc</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">genr8_lfc_filename</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file, either original file or metadata stub</p>
+</dd>
+<dt><em>ext</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">&quot;.dvc&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;.lfc&quot;</span></code></dt><dd><p>Large file metadata stub file extension</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>flfc</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of large file metadata stub file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-21 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.genr8_lfc_glob">
+<span class="sig-name descname"><span class="pre">genr8_lfc_glob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">fnames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.genr8_lfc_glob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate list of <code class="docutils literal notranslate"><span class="pre">.lfc</span></code> files matchin one or more pattern</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lfcfiles</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">genr8_lfc_glob</span><span class="p">(</span><span class="o">*</span><span class="n">fnames</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fnames</em>: <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of file name patterns to search for</p>
+</dd>
+<dt><em>mode</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">1</span></code> | <code class="docutils literal notranslate"><span class="pre">2</span></code></dt><dd><p>LFC file mode to search for</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>lfcfiles</em>: <a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of matching <code class="docutils literal notranslate"><span class="pre">.lfc</span></code> files</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.genr8_lfc_ofilename">
+<span class="sig-name descname"><span class="pre">genr8_lfc_ofilename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.genr8_lfc_ofilename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce name of original large file</p>
+<p>This strips the <code class="docutils literal notranslate"><span class="pre">.lfc</span></code> or <code class="docutils literal notranslate"><span class="pre">.dvc</span></code> extension if necessary.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">forig</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">genr8_lfc_ofilename</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file, either original file or metadata stub</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>forig</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of original large file w/o LFC extension</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-21 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.get_cachedir">
+<span class="sig-name descname"><span class="pre">get_cachedir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.get_cachedir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get name of large file cache folder</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fdir</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_cachedir</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>fdir</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Absolute path to large file cache</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2022-12-22 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1: bare repo omits “.lfc”</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.get_lfc_autopull">
+<span class="sig-name descname"><span class="pre">get_lfc_autopull</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.get_lfc_autopull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the LFC mode for auto-pull</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: do not auto-pull files</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: auto-pull all files</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: auto-pull all mode-2 files (default)</p></li>
+</ul>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mode</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_lfc_autopull</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>mode</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Files of LCF files to automatically push</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.get_lfc_autopush">
+<span class="sig-name descname"><span class="pre">get_lfc_autopush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.get_lfc_autopush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the LFC mode for auto-push</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: do not auto-push files</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: auto-push all files</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: auto-push all mode-2 files (default)</p></li>
+</ul>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mode</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_lfc_autopush</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>mode</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Files of LCF files to automatically push</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.get_lfc_configfile">
+<span class="sig-name descname"><span class="pre">get_lfc_configfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.get_lfc_configfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get name of LFC configuration file</p>
+<p>In a bare repo, this will return the path relative to the root,
+e.g. <code class="docutils literal notranslate"><span class="pre">&quot;.lfc/config&quot;</span></code>. In a working repo, it will return the
+absolute path.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fcfg</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_lfc_configfile</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>ext</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">&quot;.lfc&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;.dvc&quot;</span></code></dt><dd><p>Optional manual override for file extension</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>fcfg</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of large file client configuration</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-20 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2022-12-28 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; optional <em>ext</em> input</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.get_lfc_ext">
+<span class="sig-name descname"><span class="pre">get_lfc_ext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vdef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.lfc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.get_lfc_ext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get name of large file utility</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ext</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_lfc_ext</span><span class="p">(</span><span class="n">vdef</span><span class="o">=</span><span class="s2">&quot;.lfc&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>vdef</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;.lfc&quot;</span></code>} | <code class="docutils literal notranslate"><span class="pre">&quot;.dvc&quot;</span></code></dt><dd><p>Preferred default if neither is present</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>ext</em>: <code class="docutils literal notranslate"><span class="pre">&quot;.dvc&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;.lfc&quot;</span></code></dt><dd><p>Working extenion to use for large file stubs</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2022-12-22 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v2.0; valid for bare repos</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.get_lfc_hash">
+<span class="sig-name descname"><span class="pre">get_lfc_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.get_lfc_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get hash code used by LFC for a large file</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hashcode</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">read_lfc_file</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of original file or large file stub</p>
+</dd>
+<dt><em>ref</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Optional git reference (default <code class="docutils literal notranslate"><span class="pre">HEAD</span></code> on bare repo)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>hashcode</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>SHA-256 hash code from LFC file (MD-5 if added by DVC)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2011-12-22 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.get_lfc_remote_url">
+<span class="sig-name descname"><span class="pre">get_lfc_remote_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remote</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.get_lfc_remote_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get URL for a large file client remote</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">url</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_lfc_remote_url</span><span class="p">(</span><span class="n">remote</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>remote</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Optional explicit remote name</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>url</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path to LFC remote, either local or SSH</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-22 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2023-03-17 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; remote -&gt; local <em>url</em> check</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.get_lfcdir">
+<span class="sig-name descname"><span class="pre">get_lfcdir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.get_lfcdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get path to large file root dir</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fdir</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_lfcdir</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>fdir</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path to LFC/DVC settings dir, <code class="docutils literal notranslate"><span class="pre">.lfc</span></code> or <code class="docutils literal notranslate"><span class="pre">.dvc</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.gitdir">
+<span class="sig-name descname"><span class="pre">gitdir</span></span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.gitdir" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> – Absolute path to root directory</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_add">
+<span class="sig-name descname"><span class="pre">lfc_add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">fnames</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add one or more large files</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">lfc_add</span><span class="p">(</span><span class="o">*</span><span class="n">fnames</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fnames</em>: <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Names or wildcard patterns of files to add using LFC</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-28 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_checkout">
+<span class="sig-name descname"><span class="pre">lfc_checkout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">fnames</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_checkout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checkout one or more large files from current <code class="docutils literal notranslate"><span class="pre">.lfc</span></code> stub</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">lfc_checkout</span><span class="p">(</span><span class="o">*</span><span class="n">fnames</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fnames</em>: <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Names or wildcard patterns of files</p>
+</dd>
+<dt><em>f</em>, <em>force</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | {<code class="docutils literal notranslate"><span class="pre">False</span></code>}</dt><dd><p>Delete uncached working file if present</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2023-10-24 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_config_get">
+<span class="sig-name descname"><span class="pre">lfc_config_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fullopt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">vdef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_config_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an option from the large file client configuration</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">lfc_config_get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fullopt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of LFC config section</p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Option in LFC config section to query</p>
+</dd>
+<dt><em>vdef</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Default value</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>val</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Raw value of LCF config option</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">GitutilsKeyError</span></code> if either <em>section</em> or <em>opt</em> is
+missing from the LFC config (unless <em>vdef</em> is set)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-27 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_config_set">
+<span class="sig-name descname"><span class="pre">lfc_config_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fullopt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_config_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set an LFC configuration setting</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">lfc_config_set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fullopt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of LFC config section</p>
+</dd>
+<dt><em>val</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value to set (converted to <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-28 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_init">
+<span class="sig-name descname"><span class="pre">lfc_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a git repo for Large File Control</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">lfc_init</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-28 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2023-10-25 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; better double-call behavior</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_install_hooks">
+<span class="sig-name descname"><span class="pre">lfc_install_hooks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_install_hooks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Install full set of git-hooks for this repo</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">lfc_install_hooks</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_install_post_merge">
+<span class="sig-name descname"><span class="pre">lfc_install_post_merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_install_post_merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Install <code class="docutils literal notranslate"><span class="pre">post-merge</span></code> hook to auto-pull mode=2 files</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">lfc_install_post_merge</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_install_pre_push">
+<span class="sig-name descname"><span class="pre">lfc_install_pre_push</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_install_pre_push" title="Permalink to this definition">¶</a></dt>
+<dd><p>Install <code class="docutils literal notranslate"><span class="pre">pre-push</span></code> hook to auto-push some files</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">lfc_install_pre_push</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_pull">
+<span class="sig-name descname"><span class="pre">lfc_pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">fnames</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_pull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pull one or more large files from remote cache</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">lfc_pull</span><span class="p">(</span><span class="o">*</span><span class="n">fnames</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fnames</em>: <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Names or wildcard patterns of files</p>
+</dd>
+<dt><em>mode</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">1</span></code> | <code class="docutils literal notranslate"><span class="pre">2</span></code></dt><dd><p>LFC file mode:</p>
+</dd>
+<dt><em>f</em>, <em>force</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | {<code class="docutils literal notranslate"><span class="pre">False</span></code>}</dt><dd><p>Delete uncached working file if present</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-28 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2023-11-08 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; add <em>mode</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_push">
+<span class="sig-name descname"><span class="pre">lfc_push</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">fnames</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_push" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push one or more large files to remote cache</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">lfc_push</span><span class="p">(</span><span class="o">*</span><span class="n">fnames</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fnames</em>: <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Names or wildcard patterns of files</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-28 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_replace_dvc">
+<span class="sig-name descname"><span class="pre">lfc_replace_dvc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_replace_dvc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fully subsitute local large file control in place of DVC</p>
+<p>This command will move all <code class="docutils literal notranslate"><span class="pre">.dvc</span></code> metadata stub files to the
+same name but with <code class="docutils literal notranslate"><span class="pre">.lfc</span></code> as the extension. It will also move
+the <code class="docutils literal notranslate"><span class="pre">.dvc/</span></code> folder to <code class="docutils literal notranslate"><span class="pre">.lfc/</span></code> and remove the <code class="docutils literal notranslate"><span class="pre">.dvc/plots/</span></code>
+folder and <code class="docutils literal notranslate"><span class="pre">.dvcignore</span></code> file.</p>
+<p>If both <code class="docutils literal notranslate"><span class="pre">.dvc/</span></code> and <code class="docutils literal notranslate"><span class="pre">.lfc/</span></code> exist, this function will merge
+the caches so that any files in <code class="docutils literal notranslate"><span class="pre">.dvc/cache/</span></code> are copied into
+<code class="docutils literal notranslate"><span class="pre">.lfc/cache/</span></code>.</p>
+<p>It does not recompute any hashes as LFC can work with MD-5
+hashes. It does not compute any new ones, but it can still
+utilize the old ones and have the two intermixed.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">lfc_replace_dvc</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-28 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2023-03-17 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; delete .dvc/plots first</p></li>
+<li><p>2023-10-27 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.2; merge caches</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_set_mode">
+<span class="sig-name descname"><span class="pre">lfc_set_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">fnames</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_set_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set LFC mode for one or more files</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">lfc_set_mode</span><span class="p">(</span><span class="o">*</span><span class="n">fnames</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fnames</em>: <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Names or wildcard patterns of files to add using LFC</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.lfc_show">
+<span class="sig-name descname"><span class="pre">lfc_show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.lfc_show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the contents of an LFC file from a local cache</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">contents</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">lfc_show</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of original file or large file stub</p>
+</dd>
+<dt><em>ref</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Optional git reference (default <code class="docutils literal notranslate"><span class="pre">HEAD</span></code> on bare repo)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>contents</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></dt><dd><p>Contents of large file read from LFC cache</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2011-12-22 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.list_lfc_remotes">
+<span class="sig-name descname"><span class="pre">list_lfc_remotes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#list" title="list"><span class="pre">list</span></a></span></span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.list_lfc_remotes" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all large file remote names</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">remotenames</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">list_lfc_remotes</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>remotenames</em>: <a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-25 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.make_cachedir">
+<span class="sig-name descname"><span class="pre">make_cachedir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.make_cachedir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create large file cache folder if necessary</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">make_cachedir</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.make_lfc_config">
+<span class="sig-name descname"><span class="pre">make_lfc_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.make_lfc_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read large file client config file, or access current</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">make_lfc_config</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>config</em>: <a class="reference internal" href="standardlib.html#configparser.ConfigParser" title="configparser.ConfigParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">configparser.ConfigParser</span></code></a></dt><dd><p>Python interface to LFC configuration</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-22 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.make_lfc_portal">
+<span class="sig-name descname"><span class="pre">make_lfc_portal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remote</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="shellutils.html#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><span class="pre">SSHPortal</span></a></span></span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.make_lfc_portal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open SSH/SFTP portal for large files</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">portal</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">make_lfc_portal</span><span class="p">(</span><span class="n">slot</span><span class="o">=</span><span class="s2">&quot;lfc_portal&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>remote</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote, or default</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>portal</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">shellutils.SSHPortal</span></code></dt><dd><p>Persistent file transfer portal</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-20 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2023-10-26 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; multiple portals</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.read_lfc_config">
+<span class="sig-name descname"><span class="pre">read_lfc_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.read_lfc_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read large file client config file, even on bare repo</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">read_lfc_config</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>config</em>: <a class="reference internal" href="standardlib.html#configparser.ConfigParser" title="configparser.ConfigParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">configparser.ConfigParser</span></code></a></dt><dd><p>Python interface to LFC configuration</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-22 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.read_lfc_file">
+<span class="sig-name descname"><span class="pre">read_lfc_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.read_lfc_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read status information from large file stub</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">read_lfc_file</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of original file or large file stub</p>
+</dd>
+<dt><em>ref</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Optional git reference (default <code class="docutils literal notranslate"><span class="pre">HEAD</span></code> on bare repo)</p>
+</dd>
+<dt><em>ext</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">&quot;.dvc&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;.lfc&quot;</span></code></dt><dd><p>Large file metadata stub file extension</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>info</em>: <a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Dictionary of information about large file</p>
+</dd>
+<dt><em>info[“sha256”]</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Hex string of SHA-256 hash of file</p>
+</dd>
+<dt><em>info[“md5”]</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Hex string of MD-5 hash of file added by <code class="docutils literal notranslate"><span class="pre">dvc</span></code></p>
+</dd>
+<dt><em>info[“size”]</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>String of integer of number of bytes in large file</p>
+</dd>
+<dt><em>info[“path”]</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of original file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2011-12-20 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.read_lfc_mode">
+<span class="sig-name descname"><span class="pre">read_lfc_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.read_lfc_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read LFC file mode for a tracked file</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mode</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">read_lfc_mode</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of original file or large file stub</p>
+</dd>
+<dt><em>ref</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Optional git reference (default <code class="docutils literal notranslate"><span class="pre">HEAD</span></code> on bare repo)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>mode</em>: <code class="docutils literal notranslate"><span class="pre">1</span></code> | <code class="docutils literal notranslate"><span class="pre">2</span></code></dt><dd><p>LFC file mode:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: Only push/pull file on-demand</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: Automatically push/pull most recent version</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2023-11-08 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.resolve_lfc_remote_name">
+<span class="sig-name descname"><span class="pre">resolve_lfc_remote_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remote</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.resolve_lfc_remote_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve default LFC remote, if necessary</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">remotename</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">resolve_lfc_remote_name</span><span class="p">(</span><span class="n">remote</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>remote</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Optional explicit remote name</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>remotename</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Either <em>remote</em> or LFC setting for <em>core.remote</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-22 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.rm_lfc_remote">
+<span class="sig-name descname"><span class="pre">rm_lfc_remote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remote</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.rm_lfc_remote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a large file client remote, if possible</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">rm_lfc_remote</span><span class="p">(</span><span class="n">remote</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>remote</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of large file remote</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>remotenames</em>: <a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-27 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.set_lfc_remote">
+<span class="sig-name descname"><span class="pre">set_lfc_remote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remote</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.set_lfc_remote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add or set URL of an LFC remote</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">set_lfc_remote</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>remote</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of LFC remote</p>
+</dd>
+<dt><em>url</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path for LCF remote to point to</p>
+</dd>
+<dt><em>d</em>, <em>default</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | {<code class="docutils literal notranslate"><span class="pre">False</span></code>}</dt><dd><p>Also set <em>remote</em> as the default LFC remote</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-25 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc.lfcrepo.LFCRepo.write_lfc_config">
+<span class="sig-name descname"><span class="pre">write_lfc_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc.lfcrepo.LFCRepo.write_lfc_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write current large file configuration to file</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">write_lfc_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>config</em>: <a class="reference internal" href="standardlib.html#configparser.ConfigParser" title="configparser.ConfigParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">configparser.ConfigParser</span></code></a></dt><dd><p>Python interface to LFC configuration</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-27 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="cli.html"
+                          title="previous chapter"><code class="docutils literal notranslate"><span class="pre">cli</span></code>: Command-line interface to <code class="docutils literal notranslate"><span class="pre">lfc</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="lfcclone.html"
+                          title="next chapter"><code class="docutils literal notranslate"><span class="pre">lfcclone</span></code>: Command-line interface for <code class="docutils literal notranslate"><span class="pre">lfc-clone</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/lfcrepo.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lfcclone.html" title="lfcclone: Command-line interface for lfc-clone"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cli.html" title="cli: Command-line interface to lfc"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lfc.html" ><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">lfcrepo</span></code>: Interface to git repos with large-file control</a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>

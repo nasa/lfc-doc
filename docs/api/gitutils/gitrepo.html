@@ -1,0 +1,1276 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>gitutils.gitrepo: Interact with git repos using system interface &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <link rel="icon" href="../../_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="gitutils.giterror: Errors for gitutils Git repo tools" href="giterror.html" />
+    <link rel="prev" title="gitutils: Python interface to git repositories" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="giterror.html" title="gitutils.giterror: Errors for gitutils Git repo tools"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="gitutils: Python interface to git repositories"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">gitutils</span></code>: Python interface to git repositories</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">gitutils.gitrepo</span></code>: Interact with git repos using system interface</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-lfc._vendor.gitutils.gitrepo"></span><section id="gitutils-gitrepo-interact-with-git-repos-using-system-interface">
+<h1><code class="xref py py-mod docutils literal notranslate"><span class="pre">gitutils.gitrepo</span></code>: Interact with git repos using system interface<a class="headerlink" href="#gitutils-gitrepo-interact-with-git-repos-using-system-interface" title="Permalink to this heading">¶</a></h1>
+<p>This module provides the <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a> class, which provides a basic
+interface to a git repository (whether working or bare). Users may
+perform basic git operations such as <code class="docutils literal notranslate"><span class="pre">git-push</span></code> and <code class="docutils literal notranslate"><span class="pre">git-pull</span></code> using
+commands like <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo.push" title="lfc._vendor.gitutils.gitrepo.GitRepo.push"><code class="xref py py-func docutils literal notranslate"><span class="pre">GitRepo.push()</span></code></a>, <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo.pull" title="lfc._vendor.gitutils.gitrepo.GitRepo.pull"><code class="xref py py-func docutils literal notranslate"><span class="pre">GitRepo.pull()</span></code></a>.</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils.gitrepo.</span></span><span class="sig-name descname"><span class="pre">GitRepo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Git repository interface class</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span> <span class="o">=</span> <span class="n">GitRepo</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>where</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path from which to look for git repo (default is CWD)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo.bare" title="lfc._vendor.gitutils.gitrepo.GitRepo.bare"><code class="xref py py-attr docutils literal notranslate"><span class="pre">bare</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo.gitdir" title="lfc._vendor.gitutils.gitrepo.GitRepo.gitdir"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gitdir</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo.host" title="lfc._vendor.gitutils.gitrepo.GitRepo.host"><code class="xref py py-attr docutils literal notranslate"><span class="pre">host</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo.shell" title="lfc._vendor.gitutils.gitrepo.GitRepo.shell"><code class="xref py py-attr docutils literal notranslate"><span class="pre">shell</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">fnames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a file, either new or modified</p>
+<p>Has no effect if <em>name</em> is unchanged since last commit</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">*</span><span class="n">fnames</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Inteface to git repository</p>
+</dd>
+<dt><em>fnames</em>: <a class="reference internal" href="../python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>One or more file name or file name patterns</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-02 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.assert_bare">
+<span class="sig-name descname"><span class="pre">assert_bare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.assert_bare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assert that current repo is working (non-bare)</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">assert_working</span><span class="p">(</span><span class="n">cmd</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Inteface to git repository</p>
+</dd>
+<dt><em>cmd</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Command name for error message</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2023-09-16 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.assert_working">
+<span class="sig-name descname"><span class="pre">assert_working</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.assert_working" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assert that current repo is working (non-bare)</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">assert_working</span><span class="p">(</span><span class="n">cmd</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Inteface to git repository</p>
+</dd>
+<dt><em>cmd</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Command name for error message</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-20 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.bare">
+<span class="sig-name descname"><span class="pre">bare</span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.bare" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code> –
+Whether this instance is in a bare repository</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.call">
+<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command with generic options</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ierr</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>cmd</em>: <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Command to run in list form</p>
+</dd>
+<dt><em>cwd</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">True</span></code> | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Location in which to run subprocess; <code class="docutils literal notranslate"><span class="pre">None</span></code> is current
+working directory, and <code class="docutils literal notranslate"><span class="pre">True</span></code> is <em>repo.gitdir</em></p>
+</dd>
+<dt><em>stdout</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">subprocess.PIPE</span></code> | <a class="reference internal" href="../python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Option to supress or pipe STDOUT</p>
+</dd>
+<dt><em>stderr</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">subprocess.PIPE</span></code> | <a class="reference internal" href="../python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Option to supress or pipe STDERR</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>ierr</em>: <a class="reference internal" href="../python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code from subprocess</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2023-10-25 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2024-04-23 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v2.0; use <code class="docutils literal notranslate"><span class="pre">_call()</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.call_oe">
+<span class="sig-name descname"><span class="pre">call_oe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">codes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.call_oe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command, capturing STDOUT and checking return code</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">,</span> <span class="n">ierr</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">call_oe</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>cmd</em>: <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Command to run in list form</p>
+</dd>
+<dt><em>cwd</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">True</span></code> | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Location in which to run subprocess; <code class="docutils literal notranslate"><span class="pre">None</span></code> is current
+working directory, and <code class="docutils literal notranslate"><span class="pre">True</span></code> is <em>repo.gitdir</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>stdout</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Captured STDOUT from command, if any</p>
+</dd>
+<dt><em>stderr</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Captured STDERR from command, if any</p>
+</dd>
+<dt><em>ierr</em>: <a class="reference internal" href="../python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2023-01-08 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.check_call">
+<span class="sig-name descname"><span class="pre">check_call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">codes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.check_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command and check return code</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ierr</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">codes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>cmd</em>: <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Command to run in list form</p>
+</dd>
+<dt><em>codes</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</dt><dd><p>Collection of allowed return codes (default only <code class="docutils literal notranslate"><span class="pre">0</span></code>)</p>
+</dd>
+<dt><em>cwd</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">True</span></code> | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Location in which to run subprocess; <code class="docutils literal notranslate"><span class="pre">None</span></code> is current
+working directory, and <code class="docutils literal notranslate"><span class="pre">True</span></code> is <em>repo.gitdir</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>ierr</em>: <a class="reference internal" href="../python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code from subprocess</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2023-01-08 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.check_ignore">
+<span class="sig-name descname"><span class="pre">check_ignore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../python.html#bool" title="bool"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.check_ignore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if <em>fname</em> is (or would be) ignored by git</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">check_ignore</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>q</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Whether file is ignored (even if file doesn’t exist)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-20 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.check_o">
+<span class="sig-name descname"><span class="pre">check_o</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">codes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.check_o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command, capturing STDOUT and checking return code</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stdout</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">check_o</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">codes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>cmd</em>: <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Command to run in list form</p>
+</dd>
+<dt><em>codes</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</dt><dd><p>Collection of allowed return codes (default only <code class="docutils literal notranslate"><span class="pre">0</span></code>)</p>
+</dd>
+<dt><em>cwd</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">True</span></code> | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Location in which to run subprocess; <code class="docutils literal notranslate"><span class="pre">None</span></code> is current
+working directory, and <code class="docutils literal notranslate"><span class="pre">True</span></code> is <em>repo.gitdir</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>stdout</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Captured STDOUT from command, if any</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2023-01-08 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.check_track">
+<span class="sig-name descname"><span class="pre">check_track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../python.html#bool" title="bool"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.check_track" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a file is tracked by git</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">check_track</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>q</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Whether file is tracked</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-20 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.checkout_branch">
+<span class="sig-name descname"><span class="pre">checkout_branch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.checkout_branch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check out a branch on a working repo</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">check_branch</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>branch</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of branch to checkout if non-empty</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.commit">
+<span class="sig-name descname"><span class="pre">commit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.commit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Commit current changes</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Inteface to git repository</p>
+</dd>
+<dt><em>m</em>, <em>message</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Commit message</p>
+</dd>
+<dt><em>a</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Option to commit all modifications to tracked files</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2023-10-24 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect a persistent subprocess at base of repo</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shell</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>shell</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">shellutils.SSH</span></code></dt><dd><p>Subprocess running on either</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2023-10-25 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.create_patch">
+<span class="sig-name descname"><span class="pre">create_patch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">contents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HEAD'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.create_patch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a patch file that changes contents of a file</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">patch_file</span><span class="p">(</span>
+<span class="go">    fname, contents, m=None, branch=None, clean=True)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file (relative to root of git repo) to edit</p>
+</dd>
+<dt><em>contents</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></dt><dd><p>Contents to save for <em>fname</em></p>
+</dd>
+<dt><em>m</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Commit message for patch; default is “Patch ‘{fname}’”</p>
+</dd>
+<dt><em>ref</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;HEAD&quot;</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Git reference from which to base patch</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.get_branch_list">
+<span class="sig-name descname"><span class="pre">get_branch_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.get_branch_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of branches</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">branches</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_branch_list</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>branches</em>: <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of branches, <code class="docutils literal notranslate"><span class="pre">branches[0]</span></code> is HEAD branch</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.get_configdir">
+<span class="sig-name descname"><span class="pre">get_configdir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.get_configdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the path to the <code class="docutils literal notranslate"><span class="pre">*.git/</span></code> folder, where <code class="docutils literal notranslate"><span class="pre">config</span></code> is</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fdir</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_configdir</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>fdir</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path to <code class="docutils literal notranslate"><span class="pre">{project}.git/</span></code> or <code class="docutils literal notranslate"><span class="pre">{project}/.git/</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.get_gitconfig_opt">
+<span class="sig-name descname"><span class="pre">get_gitconfig_opt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.get_gitconfig_opt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get value of any git config setting</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_gitconfig_opt</span><span class="p">(</span><span class="n">sec</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>sec</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of config section to read</p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of option to read in config section</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>v</em>: <a class="reference internal" href="../python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value from <code class="docutils literal notranslate"><span class="pre">.git/config</span></code> for <em>sec</em> &gt; <em>opt</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.get_gitdir">
+<span class="sig-name descname"><span class="pre">get_gitdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.get_gitdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get absolute path to git repo root, even on bare repos</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">get_gitdir</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bare</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>path</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Working directory; can be local path or SSH pathlly)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>gitdir</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Full path to top-level of working repo or git-dir of bare</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-22 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; support older git vers</p></li>
+<li><p>2023-08-26 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v2.0; move to instance method</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.get_ref">
+<span class="sig-name descname"><span class="pre">get_ref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HEAD'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.get_ref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the SHA-1 hash of commit pointed to by <em>ref</em></p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">commit</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_ref</span><span class="p">(</span><span class="n">ref</span><span class="o">=</span><span class="s2">&quot;HEAD&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>ref</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;HEAD&quot;</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Git reference, can be branch name, tag, or commit hash</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>commit</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Full (SHA-1) hash of commit pointed to by <em>ref</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.get_remotes">
+<span class="sig-name descname"><span class="pre">get_remotes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../python.html#dict" title="dict"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.get_remotes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get names and URLs of remotes</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">remotes</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_remotes</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>remotes</em>: <a class="reference internal" href="../python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Dictionary of remotes and URLs for each</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.get_tmpdir">
+<span class="sig-name descname"><span class="pre">get_tmpdir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.get_tmpdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create random name for a working repo if a bare repo</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tmpdir</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_tmpdir</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>branch</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of branch to checkout if non-empty</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>tmpdir</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of folder that’s a working repo</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo._tmpbase</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Base name of suggested working repo top-level folder</p>
+</dd>
+<dt><em>repo._tmpdir</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Absolute path to suggested working repo top-level folder</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.get_user_email">
+<span class="sig-name descname"><span class="pre">get_user_email</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.get_user_email" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get author’s email address according to git config</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">addr</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_user_email</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>addr</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Email address</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.get_user_name">
+<span class="sig-name descname"><span class="pre">get_user_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.get_user_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get current user name according to git config</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">uid</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">get_user_name</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>uid</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>User name saved in <code class="docutils literal notranslate"><span class="pre">.git/config</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.get_working_repo">
+<span class="sig-name descname"><span class="pre">get_working_repo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.get_working_repo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check out a branch on a working repo</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tmp_repo</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">check_branch</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>branch</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of branch to checkout if non-empty</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>tmp_repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to working repo, <em>repo</em> if it’s a working repo
+or new temporary repo if <em>repo</em> is bare</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.gitdir">
+<span class="sig-name descname"><span class="pre">gitdir</span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.gitdir" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> – Absolute path to root directory</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.host">
+<span class="sig-name descname"><span class="pre">host</span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.host" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> –
+Name of remote host, if any; usually not used</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.ls_tree">
+<span class="sig-name descname"><span class="pre">ls_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">fnames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HEAD'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.ls_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>List files tracked by git, even in a bare repo</p>
+<p>Calling this function with no arguments will show all files
+tracked in <em>repo</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">filelist</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">ls_tree</span><span class="p">(</span><span class="o">*</span><span class="n">fnames</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;HEAD&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fnames</em>: <a class="reference internal" href="../python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Name of 0 or more files to search for</p>
+</dd>
+<dt><em>r</em>: {<code class="docutils literal notranslate"><span class="pre">True</span></code>} | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Whether or not to search recursively</p>
+</dd>
+<dt><em>ref</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;HEAD&quot;</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Git reference, can be branch name, tag, or commit hash</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>filelist</em>: <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of file names meeting above criteria</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-21 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.mv">
+<span class="sig-name descname"><span class="pre">mv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.mv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move a file or folder and inform git of change</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">fold</span><span class="p">,</span> <span class="n">fnew</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fold</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of existing file</p>
+</dd>
+<dt><em>fnew</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file after move</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-28 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.patch_file">
+<span class="sig-name descname"><span class="pre">patch_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">contents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.patch_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Commit contents to a file, whether bare or working repo</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">patch_file</span><span class="p">(</span>
+<span class="go">    fname, contents, m=None, branch=None, clean=True)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file (relative to root of git repo) to edit</p>
+</dd>
+<dt><em>contents</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></dt><dd><p>Contents to save for <em>fname</em></p>
+</dd>
+<dt><em>m</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Commit message for patch; default is “Patch ‘{fname}’”</p>
+</dd>
+<dt><em>branch</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of branch to work in; default is HEAD</p>
+</dd>
+<dt><em>clean</em>: {<code class="docutils literal notranslate"><span class="pre">True</span></code>} | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Option to delete tmp working repo if <em>repo</em> is bare</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.pull">
+<span class="sig-name descname"><span class="pre">pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remote</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HEAD'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.pull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pull from a remote repo</p>
+<p>This function does not reproduce the full functionality of the
+original <code class="docutils literal notranslate"><span class="pre">git-pull</span></code> command</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;HEAD&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>ref</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;HEAD&quot;</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Git reference, usually branch name</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.push">
+<span class="sig-name descname"><span class="pre">push</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remote</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HEAD'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.push" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push to a remote repo</p>
+<p>This function does not reproduce the full functionality of the
+original <code class="docutils literal notranslate"><span class="pre">git-push</span></code> command</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">remote</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;HEAD&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>ref</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;HEAD&quot;</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Git reference, usually branch name</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.rm">
+<span class="sig-name descname"><span class="pre">rm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">fnames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.rm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove files or folders and stage deletions for git</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="o">*</span><span class="n">fnames</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of first file/folder to remove</p>
+</dd>
+<dt><em>fnames</em>: <a class="reference internal" href="../python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Additional file/folder names or patterns to remove</p>
+</dd>
+<dt><em>r</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | {<code class="docutils literal notranslate"><span class="pre">False</span></code>}</dt><dd><p>Recursive option needed to delete folders</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-29 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.rm_working_repo">
+<span class="sig-name descname"><span class="pre">rm_working_repo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.rm_working_repo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the working repo, if it exists</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">rm_working_repo</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.shell">
+<span class="sig-name descname"><span class="pre">shell</span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.shell" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">None</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">gitutils._vendor.shellutils.SSH</span></code> –
+Optional persistent subprocess to run commands with; usually
+not used</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HEAD'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show contents of a file, even on a bare repo</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fbytes</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;HEAD&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file to read</p>
+</dd>
+<dt><em>ref</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;HEAD&quot;</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Git reference, can be branch name, tag, or commit hash</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>fbytes</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></dt><dd><p>Contents of <em>fname</em> in repository, in raw bytes</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-22 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.status">
+<span class="sig-name descname"><span class="pre">status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">fnames</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../python.html#dict" title="dict"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check status of file(s) or whole repo</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">statusdict</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="o">*</span><span class="n">fnames</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>fnames</em>: <a class="reference internal" href="../python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>File name(s); if empty, show status of entire repo</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>statusdict</em>: <a class="reference internal" href="../python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Two-letter status code for each modified file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2023-10-30 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.GitRepo.validate_branch">
+<span class="sig-name descname"><span class="pre">validate_branch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.GitRepo.validate_branch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure branch exists before using it</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">repo</span><span class="o">.</span><span class="n">validate_branch</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>repo</em>: <a class="reference internal" href="#lfc._vendor.gitutils.gitrepo.GitRepo" title="lfc._vendor.gitutils.gitrepo.GitRepo"><code class="xref py py-class docutils literal notranslate"><span class="pre">GitRepo</span></code></a></dt><dd><p>Interface to git repository</p>
+</dd>
+<dt><em>branch</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of branch to checkout if non-empty</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.get_gitdir">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils.gitrepo.</span></span><span class="sig-name descname"><span class="pre">get_gitdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bare</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.get_gitdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get absolute path to git repo root, even on bare repos</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gitdir</span> <span class="o">=</span> <span class="n">get_gitdir</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bare</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>where</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Working directory; can be local path or SSH path</p>
+</dd>
+<dt><em>bare</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Whether repo is bare (can be detected automatically)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>gitdir</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Full path to top-level of working repo or git-dir of bare</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-22 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; support older git vers</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.identify_host">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils.gitrepo.</span></span><span class="sig-name descname"><span class="pre">identify_host</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.identify_host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify possible remote host/local path breakdown</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">host</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">identify_host</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>where</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Local path like <code class="docutils literal notranslate"><span class="pre">&quot;/home/user&quot;</span></code> or remote path like
+<code class="docutils literal notranslate"><span class="pre">&quot;pfe://home&quot;</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>host</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Remote host nae preceding <code class="docutils literal notranslate"><span class="pre">:</span></code> if any</p>
+</dd>
+<dt><em>path</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path on <em>host</em>; matches <em>where</em> if no host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-03-06 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.is_bare">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils.gitrepo.</span></span><span class="sig-name descname"><span class="pre">is_bare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.is_bare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a location is in a bare git repo</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">is_bare</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>where</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | ;class:<cite>str</cite></dt><dd><p>Location to check</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>q</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Whether or not <em>where</em> is in a bare git repo</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2023-01-08 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils.gitrepo.run_gitdir">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils.gitrepo.</span></span><span class="sig-name descname"><span class="pre">run_gitdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils.gitrepo.run_gitdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to run a function within the parent folder</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">func</span> <span class="o">=</span> <span class="n">run_rootdir</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Wrapper Signature<span class="colon">:</span></dt>
+<dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-odd">Inputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>func</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">func</span></code></dt><dd><p>Name of function</p>
+</dd>
+<dt><em>cntl</em>: <code class="xref py py-class docutils literal notranslate"><span class="pre">Cntl</span></code></dt><dd><p>Control instance from which to use <em>cntl.RootDir</em></p>
+</dd>
+<dt><em>a</em>: <a class="reference internal" href="../python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>Positional args to <code class="xref py py-func docutils literal notranslate"><span class="pre">cntl.func()</span></code></p>
+</dd>
+<dt><em>kw</em>: <a class="reference internal" href="../python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Keyword args to <code class="xref py py-func docutils literal notranslate"><span class="pre">cntl.func()</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2018-11-20 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2020-02-25 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1: better exceptions</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter"><code class="docutils literal notranslate"><span class="pre">gitutils</span></code>: Python interface to git repositories</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="giterror.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gitutils.giterror</span></code>: Errors for <code class="xref py py-mod docutils literal notranslate"><span class="pre">gitutils</span></code> Git repo tools</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/api/gitutils/gitrepo.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="giterror.html" title="gitutils.giterror: Errors for gitutils Git repo tools"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="gitutils: Python interface to git repositories"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" ><code class="docutils literal notranslate"><span class="pre">gitutils</span></code>: Python interface to git repositories</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">gitutils.gitrepo</span></code>: Interact with git repos using system interface</a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>

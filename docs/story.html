@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>2. The story of lfc &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <link rel="icon" href="_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3. User Manual: LFC Command Line Interface" href="cli/index.html" />
+    <link rel="prev" title="1. Getting started with LFC" href="examples/getting-started.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cli/index.html" title="3. User Manual: LFC Command Line Interface"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="examples/getting-started.html" title="1. Getting started with LFC"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">lfc</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">2. </span>The story of <code class="docutils literal notranslate"><span class="pre">lfc</span></code></a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="the-story-of-lfc">
+<span id="story"></span><h1><span class="section-number">2. </span>The story of <code class="docutils literal notranslate"><span class="pre">lfc</span></code><a class="headerlink" href="#the-story-of-lfc" title="Permalink to this heading">¶</a></h1>
+<p>LFC is a small software package that started as one NASA team’s solution to
+the stubborn problem of what to do with large files in git repositories.
+The NASA Ames SLS Computational Fluid Dynamics team uses a lot of repos, and
+not just for software development. So although git alone is a perfect tool for
+many software development project, we were often left with <em>ad hoc</em> methods to
+deal with very large files like CFD mesh files or large solution data files.</p>
+<p>Actually, the machine learning community was dealing with roughly the same set
+of problems and developed a tool called <a class="reference external" href="https://dvc.org/">DVC</a> . Our team
+adopted DVC for some time and found it to be a novel solution to the git
+large-file conundrum. However, it was difficult to install and didn’t work
+reliably with our NASA high-performance computing environment, and as a result
+we almost immediately starting thinking about creating our own simpler tool
+with some of the same basic design. Then in late 2022 and January 2023, most
+government Linux computers were forced to upgrade to RedHat Enterprise Linux
+version 8. DVC, which used MD5 hashes, became completely unusable to us
+overnight due to strict enforcement of Federal Information Protection
+Standards (FIPS). At that point, our team forced to abandon DVC, but a tool
+that was largely compatible with DVC was desirable because we already had so
+many repos using DVC.</p>
+<p>Fortunately, because we already had a plan to develop such a tool, we were
+able to recover basic functionality within a few hours of work. We spent a
+couple more months refining our tool, calling it LFC and making sure to have as
+few dependencies as possible.</p>
+<p>That’s the story of why a small NASA team decided to create its own tool. We
+are grateful to the creators of DVC for their original concept (but happy we
+don’t have to actually use it). We think this tool will be of interest to a
+wider range of users … at least within the U.S. government where FIPS
+enforcement is an important and unavoidable factor.</p>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="examples/getting-started.html"
+                          title="previous chapter"><span class="section-number">1. </span>Getting started with LFC</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="cli/index.html"
+                          title="next chapter"><span class="section-number">3. </span>User Manual: LFC Command Line Interface</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/story.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cli/index.html" title="3. User Manual: LFC Command Line Interface"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="examples/getting-started.html" title="1. Getting started with LFC"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">lfc</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">2. </span>The story of <code class="docutils literal notranslate"><span class="pre">lfc</span></code></a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>

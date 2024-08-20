@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>3.13. lfc-auto-push: Push all mode-2 files &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.14. lfc-install-hooks: Install LFC git-hooks" href="lfc-install-hooks.html" />
+    <link rel="prev" title="3.12. lfc-auto-pull: Pull all mode-2 files" href="lfc-auto-pull.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lfc-install-hooks.html" title="3.14. lfc-install-hooks: Install LFC git-hooks"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lfc-auto-pull.html" title="3.12. lfc-auto-pull: Pull all mode-2 files"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U"><span class="section-number">3. </span>User Manual: LFC Command Line Interface</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.13. </span><code class="docutils literal notranslate"><span class="pre">lfc-auto-push</span></code>: Push all mode-2 files</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-lfc.clidoc.lfc_autopush"></span><section id="lfc-auto-push-push-all-mode-2-files">
+<h1><span class="section-number">3.13. </span><code class="docutils literal notranslate"><span class="pre">lfc-auto-push</span></code>: Push all mode-2 files<a class="headerlink" href="#lfc-auto-push-push-all-mode-2-files" title="Permalink to this heading">¶</a></h1>
+<p>This command can only be run in a WORKING repo. It will push the latest
+version of all mode-2 files. It will not push any old versions of large
+files. This can be configured to be either all large files (modes 1 and
+2) or no large files.</p>
+<p>This command is triggered automatically after <code class="docutils literal notranslate"><span class="pre">git-push</span></code> if the LFC
+hooks are installed.</p>
+<dl class="field-list">
+<dt class="field-odd">Usage<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>lfc<span class="w"> </span>auto-push
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="option-list">
+<dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>
+<dd><p>Display this help message and exit</p>
+</dd>
+<dt><kbd><span class="option">-r</span>, <span class="option">--remote <var>REMOTE</var></span></kbd></dt>
+<dd><p>Use remote cache named <em>REMOTE</em> (w/o <code class="docutils literal notranslate"><span class="pre">-r</span></code> flag, use default
+remote)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="lfc-auto-pull.html"
+                          title="previous chapter"><span class="section-number">3.12. </span><code class="docutils literal notranslate"><span class="pre">lfc-auto-pull</span></code>: Pull all mode-2 files</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="lfc-install-hooks.html"
+                          title="next chapter"><span class="section-number">3.14. </span><code class="docutils literal notranslate"><span class="pre">lfc-install-hooks</span></code>: Install LFC git-hooks</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/cli/lfc-auto-push.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lfc-install-hooks.html" title="3.14. lfc-install-hooks: Install LFC git-hooks"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lfc-auto-pull.html" title="3.12. lfc-auto-pull: Pull all mode-2 files"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" ><span class="section-number">3. </span>User Manual: LFC Command Line Interface</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.13. </span><code class="docutils literal notranslate"><span class="pre">lfc-auto-push</span></code>: Push all mode-2 files</a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>

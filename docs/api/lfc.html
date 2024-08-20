@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>lfc: A git extension to track large files &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cli: Command-line interface to lfc" href="cli.html" />
+    <link rel="prev" title="3.15. lfc-replace-dvc: Replace any DVC settings and file names" href="../cli/lfc-replace-dvc.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cli.html" title="cli: Command-line interface to lfc"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../cli/lfc-replace-dvc.html" title="3.15. lfc-replace-dvc: Replace any DVC settings and file names"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-lfc">
+<span id="lfc-a-git-extension-to-track-large-files"></span><h1><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files<a class="headerlink" href="#module-lfc" title="Permalink to this heading">¶</a></h1>
+<p>Large File Control (<code class="docutils literal notranslate"><span class="pre">lfc</span></code>) is a Python package to track large files
+in git repositories. It provides both an API (see <code class="xref py py-class docutils literal notranslate"><span class="pre">LFCRepo</span></code>) and
+a command-line interface (see <a class="reference internal" href="cli.html#module-lfc.cli" title="lfc.cli"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lfc.cli</span></code></a>).</p>
+<p>The package works by calculating SHA-256 hashes of each “large” file.
+Users determine which files are “large” by running <code class="docutils literal notranslate"><span class="pre">lfc_add()</span></code> on
+them. The package can also share these large files remotely using a
+simultaneous SSH and SFTP connection to a remote server.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cli.html"><code class="docutils literal notranslate"><span class="pre">cli</span></code>: Command-line interface to <code class="docutils literal notranslate"><span class="pre">lfc</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="lfcrepo.html"><code class="docutils literal notranslate"><span class="pre">lfcrepo</span></code>: Interface to git repos with large-file control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lfcclone.html"><code class="docutils literal notranslate"><span class="pre">lfcclone</span></code>: Command-line interface for <code class="docutils literal notranslate"><span class="pre">lfc-clone</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="lfcerror.html"><code class="docutils literal notranslate"><span class="pre">lfcerror</span></code>: Errors for <code class="xref py py-mod docutils literal notranslate"><span class="pre">lfc</span></code> modules</a></li>
+</ul>
+</div>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../cli/lfc-replace-dvc.html"
+                          title="previous chapter"><span class="section-number">3.15. </span><code class="docutils literal notranslate"><span class="pre">lfc-replace-dvc</span></code>: Replace any DVC settings and file names</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="cli.html"
+                          title="next chapter"><code class="docutils literal notranslate"><span class="pre">cli</span></code>: Command-line interface to <code class="docutils literal notranslate"><span class="pre">lfc</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/lfc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cli.html" title="cli: Command-line interface to lfc"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../cli/lfc-replace-dvc.html" title="3.15. lfc-replace-dvc: Replace any DVC settings and file names"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files</a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>

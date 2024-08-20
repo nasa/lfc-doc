@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>3.4. lfc-pull: Retrieve and checkout one or more large files &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.5. lfc-push: Push one or more large files to remote cache" href="lfc-push.html" />
+    <link rel="prev" title="3.3. lfc-add: Add or update a large file" href="lfc-add.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lfc-push.html" title="3.5. lfc-push: Push one or more large files to remote cache"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lfc-add.html" title="3.3. lfc-add: Add or update a large file"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U"><span class="section-number">3. </span>User Manual: LFC Command Line Interface</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.4. </span><code class="docutils literal notranslate"><span class="pre">lfc-pull</span></code>: Retrieve and checkout one or more large files</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-lfc.clidoc.lfc_pull"></span><section id="lfc-pull-retrieve-and-checkout-one-or-more-large-files">
+<h1><span class="section-number">3.4. </span><code class="docutils literal notranslate"><span class="pre">lfc-pull</span></code>: Retrieve and checkout one or more large files<a class="headerlink" href="#lfc-pull-retrieve-and-checkout-one-or-more-large-files" title="Permalink to this heading">¶</a></h1>
+<p>This function retrieves (either through remote or local copy) files,
+puts them in the local cache, and then checks out a copy to the WORKING
+repo. This command cannot be called from a bare repo.</p>
+<p>The first step is to find all <code class="docutils literal notranslate"><span class="pre">.lfc</span></code> files matching the users input.
+Users can specify which files to get by providing a list of file name
+patterns. If the user does not specify any patterns, all files in the
+current working directory or child directories (recursive) are pulled.</p>
+<p>Then for each <code class="docutils literal notranslate"><span class="pre">.lfc</span></code> file that meets these constraints, it downloads
+the file into the working repo’s <code class="docutils literal notranslate"><span class="pre">.lfc/cache/</span></code> folder and then copies
+the local cache file to the working repo.</p>
+<dl class="field-list">
+<dt class="field-odd">Usage<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>lfc<span class="w"> </span>pull<span class="w"> </span><span class="o">[</span>PAT1<span class="w"> </span><span class="o">[</span>PAT2<span class="w"> </span>...<span class="o">]]</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><em>PAT1</em>: First pattern for files to list</p></li>
+<li><p><em>PAT2</em>: Second pattern for files to list</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="option-list">
+<dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>
+<dd><p>Display this help message and exit</p>
+</dd>
+<dt><kbd><span class="option">-r</span>, <span class="option">--remote <var>REMOTE</var></span></kbd></dt>
+<dd><p>Use remote cache named <em>REMOTE</em> (w/o <code class="docutils literal notranslate"><span class="pre">-r</span></code> flag, use default
+remote)</p>
+</dd>
+<dt><kbd><span class="option">--mode <var>MODE</var></span></kbd></dt>
+<dd><p>Only pull files of mode <em>MODE</em>: 1 | 2 | {both}</p>
+</dd>
+<dt><kbd><span class="option">-1</span></kbd></dt>
+<dd><p>Shortcut for <code class="docutils literal notranslate"><span class="pre">--mode</span> <span class="pre">1</span></code></p>
+</dd>
+<dt><kbd><span class="option">-2</span></kbd></dt>
+<dd><p>Shortcut for <code class="docutils literal notranslate"><span class="pre">--mode</span> <span class="pre">2</span></code></p>
+</dd>
+<dt><kbd><span class="option">-f</span>, <span class="option">--force</span></kbd></dt>
+<dd><p>Overwrite uncached working files if they exist</p>
+</dd>
+<dt><kbd><span class="option">-q</span>, <span class="option">--quiet</span></kbd></dt>
+<dd><p>Reduce STDOUT during download (no messages for up-to-date files)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Examples<span class="colon">:</span></dt>
+<dd class="field-even"><p>This will download and checkout the file <code class="docutils literal notranslate"><span class="pre">myfile.dat</span></code> if the file
+<code class="docutils literal notranslate"><span class="pre">myfile.dat.lfc</span></code> exists:</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>lfc<span class="w"> </span>pull<span class="w"> </span>myfile.dat
+</pre></div>
+</div>
+</div></blockquote>
+<p>Note that</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>lfc<span class="w"> </span>pull<span class="w"> </span>myfile.dat.lfc
+</pre></div>
+</div>
+</div></blockquote>
+<p>is equivalent. Suppose the hash for this file is <code class="docutils literal notranslate"><span class="pre">'a4b3f7'</span></code>. Then
+it will look for the file <code class="docutils literal notranslate"><span class="pre">a4/b3f7</span></code> on the remote cache, copy it
+to the local cache, and then copy that file to <code class="docutils literal notranslate"><span class="pre">myfile.dat</span></code> in the
+current working directory.</p>
+<p>This will download and check out all files starting with <code class="docutils literal notranslate"><span class="pre">a</span></code> or
+<code class="docutils literal notranslate"><span class="pre">b</span></code> for which an <code class="docutils literal notranslate"><span class="pre">.lfc</span></code> file exists:</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>lfc<span class="w"> </span>pull<span class="w"> </span><span class="s2">&quot;a*.lfc&quot;</span><span class="w"> </span><span class="s2">&quot;b*.lfc&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Suppose the current folder has these files:</p>
+<blockquote>
+<div><p>a1.dat
+a1.dat.lfc
+a2.dat
+a3.dat.lfc</p>
+</div></blockquote>
+<p>Then the above command would act on the files <code class="docutils literal notranslate"><span class="pre">a1.dat</span></code> and
+<code class="docutils literal notranslate"><span class="pre">a3.dat</span></code>. <code class="docutils literal notranslate"><span class="pre">a2.dat</span></code> is not processed because there is no large
+file metadata file.</p>
+</dd>
+</dl>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="lfc-add.html"
+                          title="previous chapter"><span class="section-number">3.3. </span><code class="docutils literal notranslate"><span class="pre">lfc-add</span></code>: Add or update a large file</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="lfc-push.html"
+                          title="next chapter"><span class="section-number">3.5. </span><code class="docutils literal notranslate"><span class="pre">lfc-push</span></code>: Push one or more large files to remote cache</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/cli/lfc-pull.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lfc-push.html" title="3.5. lfc-push: Push one or more large files to remote cache"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lfc-add.html" title="3.3. lfc-add: Add or update a large file"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" ><span class="section-number">3. </span>User Manual: LFC Command Line Interface</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">3.4. </span><code class="docutils literal notranslate"><span class="pre">lfc-pull</span></code>: Retrieve and checkout one or more large files</a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>

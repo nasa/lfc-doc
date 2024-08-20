@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>lfcclone: Command-line interface for lfc-clone &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="lfcerror: Errors for lfc modules" href="lfcerror.html" />
+    <link rel="prev" title="lfcrepo: Interface to git repos with large-file control" href="lfcrepo.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lfcerror.html" title="lfcerror: Errors for lfc modules"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lfcrepo.html" title="lfcrepo: Interface to git repos with large-file control"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lfc.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">lfcclone</span></code>: Command-line interface for <code class="docutils literal notranslate"><span class="pre">lfc-clone</span></code></a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-lfc.lfcclone"></span><section id="lfcclone-command-line-interface-for-lfc-clone">
+<h1><code class="docutils literal notranslate"><span class="pre">lfcclone</span></code>: Command-line interface for <code class="docutils literal notranslate"><span class="pre">lfc-clone</span></code><a class="headerlink" href="#lfcclone-command-line-interface-for-lfc-clone" title="Permalink to this heading">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">lfc</span> <span class="pre">clone</span></code> command has a separate module (this one) in order to
+create a separate entry point (<a class="reference internal" href="#lfc.lfcclone.main" title="lfc.lfcclone.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">main()</span></code></a>). This is used for the
+command <code class="docutils literal notranslate"><span class="pre">git-lfc-clone</span></code>, which is a convenience executable. Users may
+use</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>lfc-clone<span class="w"> </span><span class="nv">$SOURCE_REPO</span><span class="w"> </span><span class="o">[</span><span class="nv">$OUT_REPO</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>or</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>lfc<span class="w"> </span>clone<span class="w"> </span><span class="nv">$SOURCE_REPO</span><span class="w"> </span><span class="o">[</span><span class="nv">$OUT_REPO</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>interchangeably.</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.lfcclone.lfc_clone">
+<span class="sig-prename descclassname"><span class="pre">lfc.lfcclone.</span></span><span class="sig-name descname"><span class="pre">lfc_clone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc.lfcclone.lfc_clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clone a repo (using git) and pull all mode-2 LFC files</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ierr</span> <span class="o">=</span> <span class="n">lfc_clone</span><span class="p">(</span><span class="n">in_repo</span><span class="p">,</span> <span class="n">bare</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ierr</span> <span class="o">=</span> <span class="n">lfc_clone</span><span class="p">(</span><span class="n">in_repo</span><span class="p">,</span> <span class="n">out_repo</span><span class="p">,</span> <span class="n">bare</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>in_repo</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>URL to repo to clone</p>
+</dd>
+<dt><em>out_repo</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Explicit name of created repo; defaults to basename of
+<em>in_repo</em></p>
+</dd>
+<dt><em>bare</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | {<code class="docutils literal notranslate"><span class="pre">False</span></code>}</dt><dd><p>Whether new repo should be a bare repo</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>ierr</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc.lfcclone.main">
+<span class="sig-prename descclassname"><span class="pre">lfc.lfcclone.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc.lfcclone.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clone a repo (using git) and pull all mode=-2 LFC files</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ierr</span> <span class="o">=</span> <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><p>(Determined from <code class="docutils literal notranslate"><span class="pre">sys.argv</span></code>)</p>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>ierr</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="lfcrepo.html"
+                          title="previous chapter"><code class="docutils literal notranslate"><span class="pre">lfcrepo</span></code>: Interface to git repos with large-file control</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="lfcerror.html"
+                          title="next chapter"><code class="docutils literal notranslate"><span class="pre">lfcerror</span></code>: Errors for <code class="xref py py-mod docutils literal notranslate"><span class="pre">lfc</span></code> modules</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/lfcclone.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lfcerror.html" title="lfcerror: Errors for lfc modules"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lfcrepo.html" title="lfcrepo: Interface to git repos with large-file control"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lfc.html" ><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">lfcclone</span></code>: Command-line interface for <code class="docutils literal notranslate"><span class="pre">lfc-clone</span></code></a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>

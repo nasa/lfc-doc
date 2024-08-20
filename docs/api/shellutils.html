@@ -1,0 +1,2116 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>shellutils: System calls with STDOUT capture, SFTP, and more &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Links to built-in Python features" href="python.html" />
+    <link rel="prev" title="gitutils.giterror: Errors for gitutils Git repo tools" href="gitutils/giterror.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="python.html" title="Links to built-in Python features"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gitutils/giterror.html" title="gitutils.giterror: Errors for gitutils Git repo tools"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">shellutils</span></code>: System calls with STDOUT capture, SFTP, and more</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-lfc._vendor.gitutils._vendor.shellutils"></span><section id="shellutils-system-calls-with-stdout-capture-sftp-and-more">
+<h1><code class="docutils literal notranslate"><span class="pre">shellutils</span></code>: System calls with STDOUT capture, SFTP, and more<a class="headerlink" href="#shellutils-system-calls-with-stdout-capture-sftp-and-more" title="Permalink to this heading">¶</a></h1>
+<p>This module mainly provides two types of tools:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>convenience functions that wrap <code class="xref py py-class docutils literal notranslate"><span class="pre">subprocess.Popen</span></code> that
+simplify common use cases and</p></li>
+<li><p>classes like <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.Shell" title="lfc._vendor.gitutils._vendor.shellutils.Shell"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shell</span></code></a> and <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a> that create
+persistent processes, usually logged into a remote host.</p></li>
+</ul>
+</div></blockquote>
+<p>The convenience functions include</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.call" title="lfc._vendor.gitutils._vendor.shellutils.call"><code class="xref py py-func docutils literal notranslate"><span class="pre">call()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.call_o" title="lfc._vendor.gitutils._vendor.shellutils.call_o"><code class="xref py py-func docutils literal notranslate"><span class="pre">call_o()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.call_oe" title="lfc._vendor.gitutils._vendor.shellutils.call_oe"><code class="xref py py-func docutils literal notranslate"><span class="pre">call_oe()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.call_q" title="lfc._vendor.gitutils._vendor.shellutils.call_q"><code class="xref py py-func docutils literal notranslate"><span class="pre">call_q()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.check_o" title="lfc._vendor.gitutils._vendor.shellutils.check_o"><code class="xref py py-func docutils literal notranslate"><span class="pre">check_o()</span></code></a></p></li>
+</ul>
+</div></blockquote>
+<p>Essentially each of these functions create an instance of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">subprocess.Popen</span></code> and then call
+<code class="xref py py-func docutils literal notranslate"><span class="pre">subprocess.Popen.communicate()</span></code>. They are all calls to
+<a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils._call" title="lfc._vendor.gitutils._vendor.shellutils._call"><code class="xref py py-func docutils literal notranslate"><span class="pre">_call()</span></code></a> but with different defaults and outputs for each case. The
+<code class="docutils literal notranslate"><span class="pre">o</span></code> stands for “output,” as in STDOUT will be captured. The <code class="docutils literal notranslate"><span class="pre">e</span></code> is
+for “error,” referring to STDERR capture, and <code class="docutils literal notranslate"><span class="pre">q</span></code> is for “quiet,”
+meaning that by default both STDOUT and STDERR will be suppressed.</p>
+<p>Finally, <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.check_o" title="lfc._vendor.gitutils._vendor.shellutils.check_o"><code class="xref py py-func docutils literal notranslate"><span class="pre">check_o()</span></code></a> is very similar to
+<code class="xref py py-func docutils literal notranslate"><span class="pre">subprocess.check_output()</span></code>; it will capture STDOUT by default, but
+it will also raise an exception if tne command’s return code is nonzero.
+All of these functions can also be used to execute a command on a remote
+host using the <em>host</em> keyword argument.</p>
+<p>The second category is collection of persistent-process classes:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.Shell" title="lfc._vendor.gitutils._vendor.shellutils.Shell"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shell</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></p></li>
+</ul>
+<p>The first works by logging into a remote host and creating a process so
+that you can run a sequence of commands there. It starts with a</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ssh<span class="w"> </span>-q<span class="w"> </span><span class="o">{</span>host<span class="o">}</span><span class="w"> </span><span class="o">{</span>shell<span class="o">}</span>
+</pre></div>
+</div>
+<p>command, for example</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ssh<span class="w"> </span>-q<span class="w"> </span>pfe<span class="w"> </span>bash
+</pre></div>
+</div>
+<p>It then sets STDIN, STDOUT, and STDERR of this process to be
+non-blocking so that you can run multiple commands and query STDOUT and
+the others more than one time.</p>
+<p>The second class, <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.Shell" title="lfc._vendor.gitutils._vendor.shellutils.Shell"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shell</span></code></a>, works in a similar way but on the
+local host. It can be convenient because a <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.Shell" title="lfc._vendor.gitutils._vendor.shellutils.Shell"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shell</span></code></a> instance has
+its own current working directory. It also enables writing code for
+which remote hosts and local hosts can share the vast majority of their
+code.</p>
+<p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a> is a similar class that starts an SFTP session to a remote
+host and behaves much like the system <code class="docutils literal notranslate"><span class="pre">sftp</span></code> itself. However, users
+will generally prefer the fourth class to using this one directly.</p>
+<p>The <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a> is simply a combination of <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a> and
+<a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a>. More specifically, it’s a new class that have an instance
+of both <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a> and <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a> as attributes. Although this
+requires two logins, it is usually preferable because it allows the
+<a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a> instance to do detailed checks and can create folders with
+complex file permissions, while the <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a> is used for the actual
+transfer of data.</p>
+<p>You can instantiate any of these classes (except <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.Shell" title="lfc._vendor.gitutils._vendor.shellutils.Shell"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shell</span></code></a>, which
+usually takes no arguments) by just giving it the name of the remote
+host as a single positional parameter.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">proc</span> <span class="o">=</span> <span class="n">SSH</span><span class="p">(</span><span class="s2">&quot;pfe&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These classes provide several common functions, such as
+<a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.listdir" title="lfc._vendor.gitutils._vendor.shellutils.SSH.listdir"><code class="xref py py-func docutils literal notranslate"><span class="pre">SSH.listdir()</span></code></a>, <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.chdir" title="lfc._vendor.gitutils._vendor.shellutils.SSH.chdir"><code class="xref py py-func docutils literal notranslate"><span class="pre">SSH.chdir()</span></code></a>, <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.cd_local" title="lfc._vendor.gitutils._vendor.shellutils.SFTP.cd_local"><code class="xref py py-func docutils literal notranslate"><span class="pre">SFTP.cd_local()</span></code></a>, and
+<a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.get" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.get"><code class="xref py py-func docutils literal notranslate"><span class="pre">SSHPortal.get()</span></code></a> and <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.put" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.put"><code class="xref py py-func docutils literal notranslate"><span class="pre">SSHPortal.put()</span></code></a>. But they (except for
+<a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a>) also have generic <code class="xref py py-func docutils literal notranslate"><span class="pre">run()</span></code> commands that allow for
+running arbitrary code by writing the command to STDIN.</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">SFTP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interface to an SFTP process</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sftp</span> <span class="o">=</span> <span class="n">SFTP</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>host</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote host to log into</p>
+</dd>
+<dt><em>encoding</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;utf-8&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Text encoding choice</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>sftp</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a></dt><dd><p>SFTP file transfer instance</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.encoding" title="lfc._vendor.gitutils._vendor.shellutils.SFTP.encoding"><code class="xref py py-attr docutils literal notranslate"><span class="pre">encoding</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.host" title="lfc._vendor.gitutils._vendor.shellutils.SFTP.host"><code class="xref py py-attr docutils literal notranslate"><span class="pre">host</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.log" title="lfc._vendor.gitutils._vendor.shellutils.SFTP.log"><code class="xref py py-attr docutils literal notranslate"><span class="pre">log</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.proc" title="lfc._vendor.gitutils._vendor.shellutils.SFTP.proc"><code class="xref py py-attr docutils literal notranslate"><span class="pre">proc</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP.cd_local">
+<span class="sig-name descname"><span class="pre">cd_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.cd_local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change working directory on local side</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sftp</span><span class="o">.</span><span class="n">cd_local</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>sftp</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a></dt><dd><p>SFTP file transfer instance</p>
+</dd>
+<dt><em>path</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Folder (absolute or relative) to change to</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP.cd_remote">
+<span class="sig-name descname"><span class="pre">cd_remote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.cd_remote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change working directory on remote side</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sftp</span><span class="o">.</span><span class="n">cd_remote</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>sftp</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a></dt><dd><p>SFTP file transfer instance</p>
+</dd>
+<dt><em>path</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Folder (absolute or relative) to change to</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP.encoding">
+<span class="sig-name descname"><span class="pre">encoding</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.encoding" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> – Text encoding for this instance</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fremote</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">flocal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer a file from remote host to local</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sftp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fremote</span><span class="p">,</span> <span class="n">flocal</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>sftp</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a></dt><dd><p>SFTP file transfer instance</p>
+</dd>
+<dt><em>fremote</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file on remote host</p>
+</dd>
+<dt><em>flocal</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of destination file on local host, default is
+<code class="docutils literal notranslate"><span class="pre">os.path.basename(fremote)</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP.getcwd_local">
+<span class="sig-name descname"><span class="pre">getcwd_local</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.getcwd_local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get current working directory for local side</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cwd</span> <span class="o">=</span> <span class="n">sftp</span><span class="o">.</span><span class="n">getcwd_local</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>sftp</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a></dt><dd><p>SFTP file transfer instance</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>cwd</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Absolute path to current working directory</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP.getcwd_remote">
+<span class="sig-name descname"><span class="pre">getcwd_remote</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.getcwd_remote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get current working directory for remote side</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cwd</span> <span class="o">=</span> <span class="n">sftp</span><span class="o">.</span><span class="n">getcwd_remote</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>sftp</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a></dt><dd><p>SFTP file transfer instance</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>cwd</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Absolute path to current working directory</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP.host">
+<span class="sig-name descname"><span class="pre">host</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.host" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> – Name of remote host for this instance</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP.log">
+<span class="sig-name descname"><span class="pre">log</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.log" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] –
+Log messages</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP.proc">
+<span class="sig-name descname"><span class="pre">proc</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">subprocess.Popen</span></code> –
+Subprocess used to interface <code class="docutils literal notranslate"><span class="pre">sftp</span></code> executable</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flocal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fremote</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer a file from local host to remote</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sftp</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">flocal</span><span class="p">,</span> <span class="n">fremote</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>sftp</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a></dt><dd><p>SFTP file transfer instance</p>
+</dd>
+<dt><em>flocal</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file on local host</p>
+</dd>
+<dt><em>fremote</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of destination file on remote host, default is
+<code class="docutils literal notranslate"><span class="pre">os.path.basename(flocal)</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP.wait">
+<span class="sig-name descname"><span class="pre">wait</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for any current commands to exit</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sftp</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>sftp</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a></dt><dd><p>SFTP file transfer instance</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SFTP.wait_stdout">
+<span class="sig-name descname"><span class="pre">wait_stdout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP.wait_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read current STDOUT, or wait until some appears</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">txt</span> <span class="o">=</span> <span class="n">sftp</span><span class="o">.</span><span class="n">wait_stdout</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>sftp</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a></dt><dd><p>SFTP file transfer instance</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>txt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <code class="docutils literal notranslate"><span class="pre">None</span></code></dt><dd><p>Text read from STDOUT, if any</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">SSH</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for persistent SSH subprocess</p>
+<p>This class opens <code class="xref py py-class docutils literal notranslate"><span class="pre">subprocess.Popen</span></code> instance that logs into a
+remote host of your choosing and then waits for you to issue
+commands. It can also collect and return STDOUT and STDERR.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ssh</span> <span class="o">=</span> <span class="n">SSH</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>host</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of server to login to using SSH (use local if <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p>
+</dd>
+<dt><em>executable</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;bash&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Executable to use on the remote host</p>
+</dd>
+<dt><em>encoding</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;utf-8&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Encoding for STDOUT, etc. bytes</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.encoding" title="lfc._vendor.gitutils._vendor.shellutils.SSH.encoding"><code class="xref py py-attr docutils literal notranslate"><span class="pre">encoding</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.executable" title="lfc._vendor.gitutils._vendor.shellutils.SSH.executable"><code class="xref py py-attr docutils literal notranslate"><span class="pre">executable</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.host" title="lfc._vendor.gitutils._vendor.shellutils.SSH.host"><code class="xref py py-attr docutils literal notranslate"><span class="pre">host</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.log" title="lfc._vendor.gitutils._vendor.shellutils.SSH.log"><code class="xref py py-attr docutils literal notranslate"><span class="pre">log</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.proc" title="lfc._vendor.gitutils._vendor.shellutils.SSH.proc"><code class="xref py py-attr docutils literal notranslate"><span class="pre">proc</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.assert_isdir">
+<span class="sig-name descname"><span class="pre">assert_isdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.assert_isdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assert that a folder exists on remote host</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ssh</span><span class="o">.</span><span class="n">assert_isdir</span><span class="p">(</span><span class="n">fdir</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>fdir</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of prospective folder to test</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.ShellutilsFileNotFoundError" title="lfc._vendor.gitutils._vendor.shellutils.ShellutilsFileNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShellutilsFileNotFoundError</span></code></a> if <em>fdir</em> is not a dir</p>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.assert_isfile">
+<span class="sig-name descname"><span class="pre">assert_isfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.assert_isfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assert that a file exists on remote host</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ssh</span><span class="o">.</span><span class="n">assert_isfile</span><span class="p">(</span><span class="n">fdir</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of prospective file to test</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.ShellutilsFileNotFoundError" title="lfc._vendor.gitutils._vendor.shellutils.ShellutilsFileNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShellutilsFileNotFoundError</span></code></a> if <em>fname</em> is not file</p>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.call">
+<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmdstr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command and collect return code</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ierr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cmd_str</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>cmdstr</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Command to run on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>ierr</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.chdir">
+<span class="sig-name descname"><span class="pre">chdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.chdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the current working directory on the remote host</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ssh</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">wd</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.communicate">
+<span class="sig-name descname"><span class="pre">communicate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.communicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command and collect return code, STDOUT, and STDERR</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ierr</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="n">cmd_str</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>cmd_str</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Command to run on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>ierr</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code</p>
+</dd>
+<dt><em>stdout</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>STDOUT from command, if any</p>
+</dd>
+<dt><em>stderr</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>STDERR from command, if any</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.echo">
+<span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.echo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Echo text to STDOUT on remote host</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ssh</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>msg</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Text to echo</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.encoding">
+<span class="sig-name descname"><span class="pre">encoding</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.encoding" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> – Encoding for this method</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.executable">
+<span class="sig-name descname"><span class="pre">executable</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.executable" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> – Executable for remote process</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.getcwd">
+<span class="sig-name descname"><span class="pre">getcwd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.getcwd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get current working directory</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cwd</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>cwd</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Working directory on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.getmtime">
+<span class="sig-name descname"><span class="pre">getmtime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.getmtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get modification time of remote file</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mtime</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>fsize</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Size of file in bytes</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2024-04-23 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.getsize">
+<span class="sig-name descname"><span class="pre">getsize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.getsize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get size of remote file</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fsize</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>fsize</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Size of file in bytes</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.host">
+<span class="sig-name descname"><span class="pre">host</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.host" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <code class="docutils literal notranslate"><span class="pre">None</span></code> –
+Name of remote host for this process; if <code class="docutils literal notranslate"><span class="pre">None</span></code> then local
+process</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.isdir">
+<span class="sig-name descname"><span class="pre">isdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#bool" title="bool"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.isdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if remote folder <em>fdir</em> exists</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fdir</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>fdir</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of prospective folder to test</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>q</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Whether or not <em>fdir</em> is a folder on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.isfile">
+<span class="sig-name descname"><span class="pre">isfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#bool" title="bool"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.isfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if remote file <em>fname</em> exists and is a file</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of prospective folder to test</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>q</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Whether or not <em>fname</em> is a file on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.listdir">
+<span class="sig-name descname"><span class="pre">listdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#list" title="list"><span class="pre">list</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.listdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>List contents of a folder</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fnames</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">fdir</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>fdir</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;.&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of prospective folder to test</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>fnames</em>: <a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of files, folders, and links in <em>fdir</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.log">
+<span class="sig-name descname"><span class="pre">log</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.log" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] – Log messages</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.mkdir">
+<span class="sig-name descname"><span class="pre">mkdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.mkdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create new folder</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ssh</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">fdir</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>fdir</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;.&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of prospective folder to test</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.newfile">
+<span class="sig-name descname"><span class="pre">newfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.newfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an empty file w/ correct ACLs based on parent folder</p>
+<p>The purpose of this command is to create an empty file with the
+correct name but obeying the default ACLs of the parent folder.
+SFTP does not upload files with the correct access control
+lists, so this file creates a new file using <code class="docutils literal notranslate"><span class="pre">touch</span></code>. When the
+empty file already exists, SFTP does not change the ACLs, so the
+result is a file with the expected permissions. If the file
+already exists, this function deletes it.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ssh</span><span class="o">.</span><span class="n">newfile</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of prospective folder to test</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.proc">
+<span class="sig-name descname"><span class="pre">proc</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">subprocess.Popen</span></code> –
+Subprocess interface for <code class="docutils literal notranslate"><span class="pre">ssh</span></code> for this instance</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.read_stdout">
+<span class="sig-name descname"><span class="pre">read_stdout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.read_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read remote process’s current STDOUT buffer</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stdout</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">read_stdout</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>stdout</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>STDOUT buffer, if any</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2023-08-11 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v2.0; os.read() to support Windows</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a file or link</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ssh</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of prospective folder to test</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.touch">
+<span class="sig-name descname"><span class="pre">touch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.touch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create empty file or update modification time</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ssh</span><span class="o">.</span><span class="n">touch</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of prospective folder to test</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.wait">
+<span class="sig-name descname"><span class="pre">wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for any running commands to terminate</p>
+<p>The method for this is to echo a random string and wait for it
+to show up in STDOUT. The random string is then removed from the
+STDOUT buffer so that other methods can access the intended
+STDOUT text.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ierr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>timeout</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#float" title="float"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Maximum seconds to wait, unlimited if <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt><em>dt</em>: {<code class="docutils literal notranslate"><span class="pre">0.02</span></code>} | <a class="reference internal" href="python.html#float" title="float"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></dt><dd><p>Seconds to wait between polls</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>ierr</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code> | <code class="docutils literal notranslate"><span class="pre">1</span></code> | <code class="docutils literal notranslate"><span class="pre">2</span></code></dt><dd><p>Status indicator:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: success</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: wait() call timed out</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>: keyboard interrupt</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSH.wait_stdout">
+<span class="sig-name descname"><span class="pre">wait_stdout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSH.wait_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Capture STDOUT, but wait for any running process to finish</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stdout</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">wait_stdout</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>timeout</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#float" title="float"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Maximum seconds to wait, unlimited if <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt><em>dt</em>: {<code class="docutils literal notranslate"><span class="pre">0.02</span></code>} | <a class="reference internal" href="python.html#float" title="float"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></dt><dd><p>Seconds to wait between polls</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>stdout</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>STDOUT but waiting until it’s nonempty</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">SSHBase</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for both <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a> and <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a></p>
+<p>This class does not have an <code class="xref py py-func docutils literal notranslate"><span class="pre">__init__()</span></code> method</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHBase.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHBase.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close SSH process</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ssh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHBase.read_stderr">
+<span class="sig-name descname"><span class="pre">read_stderr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHBase.read_stderr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read remote process’s current STDERR buffer</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">read_stderr</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHBase" title="lfc._vendor.gitutils._vendor.shellutils.SSHBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHBase</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>stderr</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>STDERR buffer, if any</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2023-08-11 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v2.0; os.read() to support Windows</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHBase.read_stdout">
+<span class="sig-name descname"><span class="pre">read_stdout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHBase.read_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read remote process’s current STDOUT buffer</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stdout</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">read_stdout</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHBase" title="lfc._vendor.gitutils._vendor.shellutils.SSHBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHBase</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>stderr</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>STDERR buffer, if any</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2023-08-11 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v2.0; os.read() to support Windows</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHBase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmdstr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHBase.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command on remote host</p>
+<p>The command does not need to end with a newline (<code class="docutils literal notranslate"><span class="pre">\\n</span></code>).</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ssh</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmdstr</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>ssh</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHBase" title="lfc._vendor.gitutils._vendor.shellutils.SSHBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHBase</span></code></a></dt><dd><p>Persistent SSH subprocess</p>
+</dd>
+<dt><em>cmdstr</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Command to run</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">SSHPortal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combined SSH and SFTP interface</p>
+<p>This class works by logging into a remote host twice, once for a
+shell (SSH) and another for SFTP.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">portal</span> <span class="o">=</span> <span class="n">SSHPortal</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>host</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote host to log into</p>
+</dd>
+<dt><em>cwd</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Optional initial absolute path of shell on <em>host</em></p>
+</dd>
+<dt><em>encoding</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;utf-8&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Text encoding choice</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>portal</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></dt><dd><p>Combined SSH and SFTP interface</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.cwd" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.cwd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">cwd</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.sftp" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.sftp"><code class="xref py py-attr docutils literal notranslate"><span class="pre">sftp</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.ssh" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.ssh"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ssh</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.abspath_local">
+<span class="sig-name descname"><span class="pre">abspath_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.abspath_local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return absolute path to local file/folder</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fabs</span> <span class="o">=</span> <span class="n">portal</span><span class="o">.</span><span class="n">abspath_local</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>portal</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></dt><dd><p>Combined remote shell and file transfer portal</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Local path to file/folder</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>fabs</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Local absolute path to <em>fname</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.assert_isfile_local">
+<span class="sig-name descname"><span class="pre">assert_isfile_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.assert_isfile_local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assert that a file exists locally</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">portal</span><span class="o">.</span><span class="n">assert_isfile_local</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>portal</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></dt><dd><p>Combined remote shell and file transfer portal</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path to local file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.ShellutilsFileNotFoundError" title="lfc._vendor.gitutils._vendor.shellutils.ShellutilsFileNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShellutilsFileNotFoundError</span></code></a> if <em>fname</em> does not
+exist relative to <em>portal.cwd</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.chdir_local">
+<span class="sig-name descname"><span class="pre">chdir_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.chdir_local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the local working directory</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">portal</span><span class="o">.</span><span class="n">chdir_remote</span><span class="p">(</span><span class="n">fdir</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>portal</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></dt><dd><p>Combined remote shell and file transfer portal</p>
+</dd>
+<dt><em>fdir</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote path, relative or absolute</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2023-08-12 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; one less line for testing</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.chdir_remote">
+<span class="sig-name descname"><span class="pre">chdir_remote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.chdir_remote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the remote working directory</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">portal</span><span class="o">.</span><span class="n">chdir_remote</span><span class="p">(</span><span class="n">fdir</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>portal</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></dt><dd><p>Combined remote shell and file transfer portal</p>
+</dd>
+<dt><em>fdir</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote path, relative or absolute</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close both SSH and SFTP shells, waiting for running commands</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">portal</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>portal</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></dt><dd><p>Combined remote shell and file transfer portal</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.cwd">
+<span class="sig-name descname"><span class="pre">cwd</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.cwd" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> – Initial local working directory</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fremote</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">flocal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer a file from remote to local host</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">portal</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fremote</span><span class="p">,</span> <span class="n">flocal</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>portal</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></dt><dd><p>Combined SSH and SFTP interface</p>
+</dd>
+<dt><em>fremote</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote file to send</p>
+</dd>
+<dt><em>flocal</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of destination file on local host; if <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+then <code class="docutils literal notranslate"><span class="pre">os.path.basename(fremote)</span></code></p>
+</dd>
+<dt><em>wait</em>: {<code class="docutils literal notranslate"><span class="pre">True</span></code>} | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Option to block (wait) until transfer completes</p>
+</dd>
+<dt><em>progress</em>: {<em>wait</em>} | <code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Option to display transfer progress percentage</p>
+</dd>
+<dt><em>fprog</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>File name to show during transfer; default is <em>fremote</em>
+truncated to fit in current terminal width</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.getsize_local">
+<span class="sig-name descname"><span class="pre">getsize_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.getsize_local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get size of local file</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">st_size</span> <span class="o">=</span> <span class="n">portal</span><span class="o">.</span><span class="n">getsize_local</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>portal</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></dt><dd><p>Combined remote shell and file transfer portal</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of local file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>st_size</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Size of file in bytes</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.getsize_remote">
+<span class="sig-name descname"><span class="pre">getsize_remote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.getsize_remote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get size of remote file</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">st_size</span> <span class="o">=</span> <span class="n">portal</span><span class="o">.</span><span class="n">getsize_local</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>portal</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></dt><dd><p>Combined remote shell and file transfer portal</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>st_size</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Size of file in bytes</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.isfile_local">
+<span class="sig-name descname"><span class="pre">isfile_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#bool" title="bool"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.isfile_local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if local file exists</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_file</span> <span class="o">=</span> <span class="n">portal</span><span class="o">.</span><span class="n">isfile_local</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>portal</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></dt><dd><p>Combined remote shell and file transfer portal</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of local file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>is_file</em>: <code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Whether <em>fname</em> exists</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flocal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fremote</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer a file from local to remote host</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">portal</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">flocal</span><span class="p">,</span> <span class="n">fremote</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>portal</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></dt><dd><p>Combined SSH and SFTP interface</p>
+</dd>
+<dt><em>flocal</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of local file to send</p>
+</dd>
+<dt><em>fremote</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of destination file on remote host; if <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+then <code class="docutils literal notranslate"><span class="pre">os.path.basename(flocal)</span></code></p>
+</dd>
+<dt><em>wait</em>: {<code class="docutils literal notranslate"><span class="pre">True</span></code>} | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Option to block (wait) until transfer completes</p>
+</dd>
+<dt><em>progress</em>: {<em>wait</em>} | <code class="docutils literal notranslate"><span class="pre">True</span></code> | <code class="docutils literal notranslate"><span class="pre">False</span></code></dt><dd><p>Option to display transfer progress percentage</p>
+</dd>
+<dt><em>fprog</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>File name to show during transfer; default is <em>flocal</em>
+truncated to fit in current terminal width</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.remove_local">
+<span class="sig-name descname"><span class="pre">remove_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.remove_local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a local file, if it exists</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">portal</span><span class="o">.</span><span class="n">remove_local</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>portal</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal" title="lfc._vendor.gitutils._vendor.shellutils.SSHPortal"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSHPortal</span></code></a></dt><dd><p>Combined remote shell and file transfer portal</p>
+</dd>
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of local file</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.sftp">
+<span class="sig-name descname"><span class="pre">sftp</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.sftp" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SFTP" title="lfc._vendor.gitutils._vendor.shellutils.SFTP"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFTP</span></code></a> – File transfer interface for this instance</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.SSHPortal.ssh">
+<span class="sig-name descname"><span class="pre">ssh</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.SSHPortal.ssh" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.SSH" title="lfc._vendor.gitutils._vendor.shellutils.SSH"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSH</span></code></a> – Remote shell interface for this instance</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.Shell">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">Shell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.Shell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for persistent local subprocess</p>
+<p>This class opens <code class="xref py py-class docutils literal notranslate"><span class="pre">subprocess.Popen</span></code> instance that starts a
+shell process (usually BASH) on your local host and then waits for
+you to issue commands. It can also collect and return STDOUT and
+STDERR.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shell</span> <span class="o">=</span> <span class="n">Shell</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>host</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of server to login to using SSH</p>
+</dd>
+<dt><em>executable</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;bash&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Executable to use on the remote host</p>
+</dd>
+<dt><em>encoding</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;utf-8&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Encoding for STDOUT, etc. bytes</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>shell</em>: <a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.Shell" title="lfc._vendor.gitutils._vendor.shellutils.Shell"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shell</span></code></a></dt><dd><p>Persistent local subprocess</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.Shell.encoding" title="lfc._vendor.gitutils._vendor.shellutils.Shell.encoding"><code class="xref py py-attr docutils literal notranslate"><span class="pre">encoding</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.Shell.executable" title="lfc._vendor.gitutils._vendor.shellutils.Shell.executable"><code class="xref py py-attr docutils literal notranslate"><span class="pre">executable</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.Shell.host" title="lfc._vendor.gitutils._vendor.shellutils.Shell.host"><code class="xref py py-attr docutils literal notranslate"><span class="pre">host</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.Shell.log" title="lfc._vendor.gitutils._vendor.shellutils.Shell.log"><code class="xref py py-attr docutils literal notranslate"><span class="pre">log</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.gitutils._vendor.shellutils.Shell.proc" title="lfc._vendor.gitutils._vendor.shellutils.Shell.proc"><code class="xref py py-attr docutils literal notranslate"><span class="pre">proc</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.Shell.encoding">
+<span class="sig-name descname"><span class="pre">encoding</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.Shell.encoding" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> – Encoding for this method</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.Shell.executable">
+<span class="sig-name descname"><span class="pre">executable</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.Shell.executable" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> – Executable for remote process</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.Shell.host">
+<span class="sig-name descname"><span class="pre">host</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.Shell.host" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <code class="docutils literal notranslate"><span class="pre">None</span></code> –
+Name of remote host for this process; if <code class="docutils literal notranslate"><span class="pre">None</span></code> then local
+process</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.Shell.log">
+<span class="sig-name descname"><span class="pre">log</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.Shell.log" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] – Log messages</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.Shell.proc">
+<span class="sig-name descname"><span class="pre">proc</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.Shell.proc" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">subprocess.Popen</span></code> –
+Subprocess interface for <code class="docutils literal notranslate"><span class="pre">ssh</span></code> for this instance</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.ShellutilsError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">ShellutilsError</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.ShellutilsError" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.ShellutilsFileExistsError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">ShellutilsFileExistsError</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.ShellutilsFileExistsError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error class for already existing file</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.ShellutilsFileNotFoundError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">ShellutilsFileNotFoundError</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.ShellutilsFileNotFoundError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error class for file/folder not found</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.ShellutilsFilenameError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">ShellutilsFilenameError</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.ShellutilsFilenameError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error class for invalid file names</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.ShellutilsIsADirectoryError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">ShellutilsIsADirectoryError</span></span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.ShellutilsIsADirectoryError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error class for attempting to access folder as if a file</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils._call">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">_call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils._call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic system interface</p>
+<p>This command can either capture STDOUT [and/or STDERR], print it
+to the terminal, or pipe it to a file.  It more or less
+encapsulates the capabilities of</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">subprocess.call()</span></code> and</p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">subprocess.check_output()</span></code></p></li>
+</ul>
+</div></blockquote>
+<p>although it works by using <code class="xref py py-class docutils literal notranslate"><span class="pre">subprocess.Popen</span></code> directly.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">out</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">ierr</span> <span class="o">=</span> <span class="n">_call</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cmd</em>: <a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>System command to run, broken into parts as for
+<code class="xref py py-func docutils literal notranslate"><span class="pre">subprocess.call()</span></code></p>
+</dd>
+<dt><em>stdout</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <em>PIPE</em> | <a class="reference internal" href="python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Destination for standard output</p>
+</dd>
+<dt><em>stderr</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <em>PIPE</em> | <a class="reference internal" href="python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Destination for standard error messages</p>
+</dd>
+<dt><em>encoding</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;utf-8&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of encoding to use for converting strings to bytes</p>
+</dd>
+<dt><em>host</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote host (if not <code class="docutils literal notranslate"><span class="pre">None</span></code>) on which to run</p>
+</dd>
+<dt><em>cwd</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Folder in which to run command</p>
+</dd>
+<dt><em>executable</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;sh&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of shell to use if on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>out</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Captured STDOUT if <em>stdout</em> is <em>subprocess.PIPE</em></p>
+</dd>
+<dt><em>err</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Captured STDERR if <em>stdout</em> is <em>subprocess.PIPE</em></p>
+</dd>
+<dt><em>ierr</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code from executing command</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2020-12-24 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2021-01-27 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; fix default cwd w/ host</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.call">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a system command and ignore STDOUT and STDERR</p>
+<p>Setting <em>stdout</em> and/or <em>stderr</em> to <em>PIPE</em> will suppress them.
+Setting them to <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default) will cause them to display
+normally and not be captured.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ierr</span> <span class="o">=</span> <span class="n">call</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cmd</em>: <a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>System command to run, broken into parts as for
+<code class="xref py py-func docutils literal notranslate"><span class="pre">subprocess.call()</span></code></p>
+</dd>
+<dt><em>stdout</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <em>PIPE</em> | <a class="reference internal" href="python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Destination for standard output</p>
+</dd>
+<dt><em>stderr</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <em>PIPE</em> | <a class="reference internal" href="python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Destination for standard error messages</p>
+</dd>
+<dt><em>encoding</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;utf-8&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of encoding to use for converting strings to bytes</p>
+</dd>
+<dt><em>host</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote host (if not <code class="docutils literal notranslate"><span class="pre">None</span></code>) on which to run</p>
+</dd>
+<dt><em>cwd</em>: {<code class="docutils literal notranslate"><span class="pre">os.getcwd()</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Folder in which to run command</p>
+</dd>
+<dt><em>executable</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;sh&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of shell to use if on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>ierr</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code from executing command</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2020-12-24 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.call_o">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">call_o</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.call_o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a system command and capture STDOUT</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">out</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">ierr</span> <span class="o">=</span> <span class="n">call_o</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cmd</em>: <a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>System command to run, broken into parts as for
+<code class="xref py py-func docutils literal notranslate"><span class="pre">subprocess.call()</span></code></p>
+</dd>
+<dt><em>stdout</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | {<em>PIPE</em>} | <a class="reference internal" href="python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Destination for standard output</p>
+</dd>
+<dt><em>stderr</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <em>PIPE</em> | <a class="reference internal" href="python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Destination for standard error messages</p>
+</dd>
+<dt><em>encoding</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;utf-8&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of encoding to use for converting strings to bytes</p>
+</dd>
+<dt><em>host</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote host (if not <code class="docutils literal notranslate"><span class="pre">None</span></code>) on which to run</p>
+</dd>
+<dt><em>cwd</em>: {<code class="docutils literal notranslate"><span class="pre">os.getcwd()</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Folder in which to run command</p>
+</dd>
+<dt><em>executable</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;sh&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of shell to use if on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>out</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Captured STDOUT decoded as a <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+<dt><em>err</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Captured STDERR if <em>stdout</em> is <em>subprocess.PIPE</em></p>
+</dd>
+<dt><em>ierr</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code from executing command</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2020-12-24 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.call_oe">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">call_oe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.call_oe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a system command and capture STDOUT</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">out</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">ierr</span> <span class="o">=</span> <span class="n">call_oe</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cmd</em>: <a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>System command to run, broken into parts as for
+<code class="xref py py-func docutils literal notranslate"><span class="pre">subprocess.call()</span></code></p>
+</dd>
+<dt><em>stdout</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | {<em>PIPE</em>} | <a class="reference internal" href="python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Destination for standard output</p>
+</dd>
+<dt><em>stderr</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | {<em>PIPE</em>} | <a class="reference internal" href="python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Destination for standard error messages</p>
+</dd>
+<dt><em>encoding</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;utf-8&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of encoding to use for converting strings to bytes</p>
+</dd>
+<dt><em>host</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote host (if not <code class="docutils literal notranslate"><span class="pre">None</span></code>) on which to run</p>
+</dd>
+<dt><em>cwd</em>: {<code class="docutils literal notranslate"><span class="pre">os.getcwd()</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Folder in which to run command</p>
+</dd>
+<dt><em>executable</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;sh&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of shell to use if on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>out</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Captured STDOUT decoded as a <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+<dt><em>err</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Captured STDERR if <em>stdout</em> is <em>subprocess.PIPE</em></p>
+</dd>
+<dt><em>ierr</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code from executing command</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2021-07-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.call_q">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">call_q</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.call_q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a system command, suppressing STDOUT and STDERR</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ierr</span> <span class="o">=</span> <span class="n">call_q</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cmd</em>: <a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>System command to run, broken into parts as for
+<code class="xref py py-func docutils literal notranslate"><span class="pre">subprocess.call()</span></code></p>
+</dd>
+<dt><em>stdout</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | {<em>PIPE</em>} | <a class="reference internal" href="python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Destination for standard output</p>
+</dd>
+<dt><em>stderr</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | {<em>PIPE</em>} | <a class="reference internal" href="python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Destination for standard error messages</p>
+</dd>
+<dt><em>encoding</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;utf-8&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of encoding to use for converting strings to bytes</p>
+</dd>
+<dt><em>host</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote host (if not <code class="docutils literal notranslate"><span class="pre">None</span></code>) on which to run</p>
+</dd>
+<dt><em>cwd</em>: {<code class="docutils literal notranslate"><span class="pre">os.getcwd()</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Folder in which to run command</p>
+</dd>
+<dt><em>executable</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;sh&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of shell to use if on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>ierr</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Return code from executing command</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2020-12-24 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.check_o">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">check_o</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.check_o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a system command and capture STDOUT</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">check_o</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cmd</em>: <a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>System command to run, broken into parts as for
+<code class="xref py py-func docutils literal notranslate"><span class="pre">subprocess.call()</span></code></p>
+</dd>
+<dt><em>stdout</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | {<em>PIPE</em>} | <a class="reference internal" href="python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Destination for standard output</p>
+</dd>
+<dt><em>stderr</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <em>PIPE</em> | <a class="reference internal" href="python.html#file" title="file"><code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code></a></dt><dd><p>Destination for standard error messages</p>
+</dd>
+<dt><em>encoding</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;utf-8&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of encoding to use for converting strings to bytes</p>
+</dd>
+<dt><em>host</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of remote host (if not <code class="docutils literal notranslate"><span class="pre">None</span></code>) on which to run</p>
+</dd>
+<dt><em>cwd</em>: {<code class="docutils literal notranslate"><span class="pre">os.getcwd()</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Folder in which to run command</p>
+</dd>
+<dt><em>executable</em>: {<code class="docutils literal notranslate"><span class="pre">&quot;sh&quot;</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of shell to use if on remote host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>out</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Captured STDOUT decoded as a <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+<dt><em>err</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Captured STDERR if <em>stdout</em> is <em>subprocess.PIPE</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2020-12-24 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.identify_host">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">identify_host</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.identify_host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify possible remote host/local path breakdown</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">host</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">identify_host</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>where</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Local path like <code class="docutils literal notranslate"><span class="pre">&quot;/home/user&quot;</span></code> or remote path like
+<code class="docutils literal notranslate"><span class="pre">&quot;pfe://home&quot;</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>host</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Remote host nae preceding <code class="docutils literal notranslate"><span class="pre">:</span></code> if any</p>
+</dd>
+<dt><em>path</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Path on <em>host</em>; matches <em>where</em> if no host</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2022-03-06 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.validate_absfilename">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">validate_absfilename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.validate_absfilename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a file name is valid, allowing for folder names</p>
+<p>This version only disallows punctuation characters that cause
+problems on at least one common file system. Single quotes and
+foreign language characters are allowed.</p>
+<p>It also restricts the file name length to 255 characters, even
+though this is not strictly speaking a hard limit on Windows
+systems.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">validate_absfilename</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file</p>
+</dd>
+<dt><em>sep</em>: {<code class="docutils literal notranslate"><span class="pre">'/'</span></code>} | <code class="docutils literal notranslate"><span class="pre">&quot;\&quot;</span></code></dt><dd><p>Path separator</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2023-10-25 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; add <em>sep</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.validate_dirname">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">validate_dirname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.validate_dirname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a folder name is valid</p>
+<p>This version only disallows punctuation characters that cause
+problems on at least one common file system. Single quotes and
+foreign language characters are allowed.</p>
+<p>It also restricts the file name length to 255 characters, even
+though this is not strictly speaking a hard limit on Windows
+systems.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">validate_dirname</span><span class="p">(</span><span class="n">fdir</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>fdir</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+<li><p>2023-10-25 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.1; add <em>sep</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.validate_filename">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">validate_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a file name is valid</p>
+<p>This version only disallows punctuation characters that cause
+problems on at least one common file system. Single quotes and
+foreign language characters are allowed.</p>
+<p>It also restricts the file name length to 255 characters, even
+though this is not strictly speaking a hard limit on Windows
+systems.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">validate_filename</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.gitutils._vendor.shellutils.validate_globname">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.gitutils._vendor.shellutils.</span></span><span class="sig-name descname"><span class="pre">validate_globname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.gitutils._vendor.shellutils.validate_globname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a glob pattern is valid</p>
+<p>This version only disallows punctuation characters that cause
+problems on at least one common file system. Single quotes and
+foreign language characters are allowed.</p>
+<p>It also restricts the file name length to 255 characters, even
+though this is not strictly speaking a hard limit on Windows
+systems.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">validate_globname</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>fname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2022-12-19 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="gitutils/giterror.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gitutils.giterror</span></code>: Errors for <code class="xref py py-mod docutils literal notranslate"><span class="pre">gitutils</span></code> Git repo tools</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="python.html"
+                          title="next chapter">Links to built-in Python features</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/shellutils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="python.html" title="Links to built-in Python features"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="gitutils/giterror.html" title="gitutils.giterror: Errors for gitutils Git repo tools"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">shellutils</span></code>: System calls with STDOUT capture, SFTP, and more</a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>

@@ -1,0 +1,680 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>argread: Parse command-line arguments and options &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <link rel="icon" href="../../_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="argread.clitext: Process help messages for console output" href="clitext.html" />
+    <link rel="prev" title="lfcerror: Errors for lfc modules" href="../lfcerror.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="clitext.html" title="argread.clitext: Process help messages for console output"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../lfcerror.html" title="lfcerror: Errors for lfc modules"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">lfc</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">argread</span></code>: Parse command-line arguments and options</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-lfc._vendor.argread"></span><section id="argread-parse-command-line-arguments-and-options">
+<h1><code class="docutils literal notranslate"><span class="pre">argread</span></code>: Parse command-line arguments and options<a class="headerlink" href="#argread-parse-command-line-arguments-and-options" title="Permalink to this heading">¶</a></h1>
+<p>This class provides the <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a> class, instances of
+which can be used to customize available command-line options for a
+given interface.</p>
+<p>The <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a> class has the function <a class="reference internal" href="#lfc._vendor.argread.ArgReader.parse" title="lfc._vendor.argread.ArgReader.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">ArgReader.parse()</span></code></a>,
+which interprets <code class="docutils literal notranslate"><span class="pre">sys.argv</span></code> and splits it into a list of args and
+kwargs. The base <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a> class will parse command-line
+arguments in useful ways, but one of the main intents is to subclass
+<a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a> and customize how various CLI arguments are parsed.</p>
+<p>Here are some examples of the base interpreter, which can also be used
+with the convenience function <a class="reference internal" href="#lfc._vendor.argread.readkeys" title="lfc._vendor.argread.readkeys"><code class="xref py py-func docutils literal notranslate"><span class="pre">readkeys()</span></code></a>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">readkeys</span><span class="p">([</span><span class="s2">&quot;prog&quot;</span><span class="p">,</span> <span class="s2">&quot;arg1&quot;</span><span class="p">,</span> <span class="s2">&quot;arg2&quot;</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--name&quot;</span><span class="p">,</span> <span class="s2">&quot;argread&quot;</span><span class="p">])</span>
+<span class="go">(&quot;arg1&quot;, &quot;arg2&quot;), {&quot;v&quot;: True, &quot;name&quot;: &quot;argread&quot;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">readkeys</span><span class="p">([</span><span class="s2">&quot;prog&quot;</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;-name&quot;</span><span class="p">,</span> <span class="s2">&quot;argread&quot;</span><span class="p">,</span> <span class="s2">&quot;d=3&quot;</span><span class="p">])</span>
+<span class="go">(&quot;2&quot;,), {&quot;v&quot;: &quot;1&quot;, &quot;name&quot;: &quot;argread&quot;, &quot;d&quot;: &quot;3&quot;}</span>
+</pre></div>
+</div>
+<p>Notice that the <code class="docutils literal notranslate"><span class="pre">1</span></code> goes as the value of the option <code class="docutils literal notranslate"><span class="pre">v</span></code>. The <code class="docutils literal notranslate"><span class="pre">2</span></code>
+is not preceded by a <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> starting with a dash, so it gets
+interpreted as an arg.</p>
+<p>There is an alternate function <a class="reference internal" href="#lfc._vendor.argread.readflags" title="lfc._vendor.argread.readflags"><code class="xref py py-func docutils literal notranslate"><span class="pre">readflags()</span></code></a> that interprets
+multi-letter args starting with a single dash differently:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">readflags</span><span class="p">([</span><span class="s2">&quot;prog&quot;</span><span class="p">,</span> <span class="s2">&quot;-lh&quot;</span><span class="p">,</span> <span class="s2">&quot;fname&quot;</span><span class="p">])</span>
+<span class="go">(&quot;fname&quot;,), {&quot;l&quot;: True, &quot;h&quot;: True}</span>
+</pre></div>
+</div>
+<p>There is a third function <a class="reference internal" href="#lfc._vendor.argread.readflagstar" title="lfc._vendor.argread.readflagstar"><code class="xref py py-func docutils literal notranslate"><span class="pre">readflagstar()</span></code></a> that interprets arguments
+like <code class="docutils literal notranslate"><span class="pre">tar</span></code></p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">readflagstar</span><span class="p">([</span><span class="s2">&quot;prog&quot;</span><span class="p">,</span> <span class="s2">&quot;-cvf&quot;</span><span class="p">,</span> <span class="s2">&quot;fname&quot;</span><span class="p">])</span>
+<span class="go">(), {&quot;c&quot;: True, &quot;v&quot;: True, &quot;f&quot;: &quot;fname&quot;}</span>
+</pre></div>
+</div>
+<p>These convenience functions make it easy to parse many command-line
+inputs with minimal effort, but it is also possible to declare richer
+and more specific interfaces by subclassing <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a>.</p>
+<p>For example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyParser</span><span class="p">(</span><span class="n">ArgReader</span><span class="p">):</span>
+    <span class="n">_optlist_noval</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;default&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;verbose&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">_optmap</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="n">verbose</span><span class="s2">&quot;,</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>has two properties. First <code class="docutils literal notranslate"><span class="pre">-d</span></code> and <code class="docutils literal notranslate"><span class="pre">-v</span></code> are abbreviations for
+<code class="docutils literal notranslate"><span class="pre">--default</span></code> and <code class="docutils literal notranslate"><span class="pre">--verbose</span></code>, respectively, because of the entries in
+<code class="xref py py-data docutils literal notranslate"><span class="pre">MyParser._optmap</span></code>. Second, neither option can take a “value”, so</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>prog<span class="w"> </span>-d<span class="w"> </span>hub<span class="w"> </span>url
+</pre></div>
+</div>
+<p>would be parsed as</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="s2">&quot;hub&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">),</span> <span class="p">{</span><span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>In other words, the word <code class="docutils literal notranslate"><span class="pre">hub</span></code> didn’t get interpreted as the value for
+the option <code class="docutils literal notranslate"><span class="pre">d</span></code> as it would with the default <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a>.</p>
+<p>Another common use case is to convert CLI strings to another type. For
+example suppose you have an option <code class="docutils literal notranslate"><span class="pre">i</span></code> that takes in the index of
+something you want to work with, like</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>prog<span class="w"> </span>-i<span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+<p>The default <a class="reference internal" href="#lfc._vendor.argread.readkeys" title="lfc._vendor.argread.readkeys"><code class="xref py py-func docutils literal notranslate"><span class="pre">readkeys()</span></code></a> in this case would return</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">(),</span> <span class="p">{</span><span class="s2">&quot;i&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>you can convert this <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> <code class="docutils literal notranslate"><span class="pre">&quot;3&quot;</span></code> to an <a class="reference internal" href="../python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> with the
+following subclass</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyConverter</span><span class="p">(</span><span class="n">ArgReader</span><span class="p">):</span>
+    <span class="n">_optconverters</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;i&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread.</span></span><span class="sig-name descname"><span class="pre">ArgReader</span></span><a class="headerlink" href="#lfc._vendor.argread.ArgReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to parse command-line interface arguments</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">ArgReader</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Outputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>parser</em>: <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a></dt><dd><p>Instance of command-line argument parser</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#lfc._vendor.argread.ArgReader.argv" title="lfc._vendor.argread.ArgReader.argv"><code class="xref py py-attr docutils literal notranslate"><span class="pre">argv</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.argread.ArgReader.prog" title="lfc._vendor.argread.ArgReader.prog"><code class="xref py py-attr docutils literal notranslate"><span class="pre">prog</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.argread.ArgReader.kwargs_sequence" title="lfc._vendor.argread.ArgReader.kwargs_sequence"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwargs_sequence</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.argread.ArgReader.kwargs_replaced" title="lfc._vendor.argread.ArgReader.kwargs_replaced"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwargs_replaced</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.argread.ArgReader.kwargs_single_dash" title="lfc._vendor.argread.ArgReader.kwargs_single_dash"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwargs_single_dash</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.argread.ArgReader.kwargs_double_dash" title="lfc._vendor.argread.ArgReader.kwargs_double_dash"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwargs_double_dash</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.argread.ArgReader.kwargs_equal_sign" title="lfc._vendor.argread.ArgReader.kwargs_equal_sign"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwargs_equal_sign</span></code></a></p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.argread.ArgReader.param_sequence" title="lfc._vendor.argread.ArgReader.param_sequence"><code class="xref py py-attr docutils literal notranslate"><span class="pre">param_sequence</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">See also<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../kwparse.html#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">_vendor.kwparse.KwargParser</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader._optlist_noval">
+<span class="sig-name descname"><span class="pre">_optlist_noval</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#lfc._vendor.argread.ArgReader._optlist_noval" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of options that cannot take a value:
+(<a class="reference internal" href="../python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> | <a class="reference internal" href="../python.html#set" title="set"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a>)[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader._restrict">
+<span class="sig-name descname"><span class="pre">_restrict</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#lfc._vendor.argread.ArgReader._restrict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Option to enforce <code class="docutils literal notranslate"><span class="pre">_optlist</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.argv">
+<span class="sig-name descname"><span class="pre">argv</span></span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.argv" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] –
+List of raw CLI commands parsed</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.equal_sign_key">
+<span class="sig-name descname"><span class="pre">equal_sign_key</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#lfc._vendor.argread.ArgReader.equal_sign_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Option to allow equal-sign options, e.g.
+<code class="docutils literal notranslate"><span class="pre">key=val</span></code> becomes <code class="docutils literal notranslate"><span class="pre">{&quot;key&quot;:</span> <span class="pre">&quot;val&quot;}</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.exc_cls">
+<span class="sig-name descname"><span class="pre">exc_cls</span></span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.exc_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base exception class: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>alias of <a class="reference internal" href="#lfc._vendor.argread.ArgReadError" title="lfc._vendor.argread.ArgReadError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReadError</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.get_args">
+<span class="sig-name descname"><span class="pre">get_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.get_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get full list of args and options from parsed inputs</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_args</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Outputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>args</em>: <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of positional parameter argument values</p>
+</dd>
+<dt><em>kwargs</em>: <a class="reference internal" href="../python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Dictionary of named options and their values</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2023-11-08 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.kwargs_double_dash">
+<span class="sig-name descname"><span class="pre">kwargs_double_dash</span></span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.kwargs_double_dash" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] –
+List of options that were entered with a double dash</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.kwargs_equal_sign">
+<span class="sig-name descname"><span class="pre">kwargs_equal_sign</span></span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.kwargs_equal_sign" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] –
+List of options that were entered using <code class="docutils literal notranslate"><span class="pre">key=val</span></code> syntax</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.kwargs_replaced">
+<span class="sig-name descname"><span class="pre">kwargs_replaced</span></span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.kwargs_replaced" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] –
+List of options that have duplicates</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.kwargs_sequence">
+<span class="sig-name descname"><span class="pre">kwargs_sequence</span></span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.kwargs_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] –
+List of options in original order</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.kwargs_single_dash">
+<span class="sig-name descname"><span class="pre">kwargs_single_dash</span></span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.kwargs_single_dash" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] –
+List of options that were entered with a single dash</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.param_sequence">
+<span class="sig-name descname"><span class="pre">param_sequence</span></span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.param_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="../python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a>] –
+List of option name and value as parsed (includes duplicates
+in their original order)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse CLI args</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">kw</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>parser</em>: <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a></dt><dd><p>Command-line argument parser</p>
+</dd>
+<dt><em>argv</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Optional arguments to parse, else <code class="docutils literal notranslate"><span class="pre">sys.argv</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>a</em>: <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a></dt><dd><p>List of positional arguments</p>
+</dd>
+<dt><em>kw</em>: <a class="reference internal" href="../python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Dictionary of options and their values</p>
+</dd>
+<dt><em>kw[“__replaced__”]</em>: <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[(<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>any</em>)]</dt><dd><p>List of any options replaced by later values</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2021-11-21 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.prog">
+<span class="sig-name descname"><span class="pre">prog</span></span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.prog" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> – Name of program read from <code class="docutils literal notranslate"><span class="pre">argv[0]</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.save_arg">
+<span class="sig-name descname"><span class="pre">save_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.save_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a positional argument</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">save_arg</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">narg</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>parser</em>: <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a></dt><dd><p>Command-line argument parser</p>
+</dd>
+<dt><em>arg</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name/value of next parameter</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2021-11-23 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.save_double_dash">
+<span class="sig-name descname"><span class="pre">save_double_dash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.save_double_dash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a double-dash keyword and value</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">save_double_dash</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>parser</em>: <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a></dt><dd><p>Command-line argument parser</p>
+</dd>
+<dt><em>k</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of key to save</p>
+</dd>
+<dt><em>v</em>: {<code class="docutils literal notranslate"><span class="pre">True</span></code>} | <code class="docutils literal notranslate"><span class="pre">False</span></code> | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Value to save</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2021-11-23 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.save_equal_key">
+<span class="sig-name descname"><span class="pre">save_equal_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.save_equal_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save an equal-sign key/value pair, like <code class="docutils literal notranslate"><span class="pre">&quot;mach=0.9&quot;</span></code></p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">save_equal_key</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>parser</em>: <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a></dt><dd><p>Command-line argument parser</p>
+</dd>
+<dt><em>k</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of key to save</p>
+</dd>
+<dt><em>v</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Value to save</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2021-11-23 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.save_single_dash">
+<span class="sig-name descname"><span class="pre">save_single_dash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread.ArgReader.save_single_dash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a single-dash keyword and value</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">save_single_dash</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>parser</em>: <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a></dt><dd><p>Command-line argument parser</p>
+</dd>
+<dt><em>k</em>: <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of key to save</p>
+</dd>
+<dt><em>v</em>: {<code class="docutils literal notranslate"><span class="pre">True</span></code>} | <code class="docutils literal notranslate"><span class="pre">False</span></code> | <a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Value to save</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Versions<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>2021-11-23 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.single_dash_lastkey">
+<span class="sig-name descname"><span class="pre">single_dash_lastkey</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#lfc._vendor.argread.ArgReader.single_dash_lastkey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Option to interpret multi-char words with a single dash
+the way POSIX command <code class="docutils literal notranslate"><span class="pre">tar</span></code> does, e.g.
+<code class="docutils literal notranslate"><span class="pre">-cvf</span> <span class="pre">val</span></code> becomes <code class="docutils literal notranslate"><span class="pre">{&quot;c&quot;:</span> <span class="pre">True,</span> <span class="pre">&quot;v&quot;:</span> <span class="pre">True,</span> <span class="pre">&quot;f&quot;:</span> <span class="pre">&quot;val&quot;}</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReader.single_dash_split">
+<span class="sig-name descname"><span class="pre">single_dash_split</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#lfc._vendor.argread.ArgReader.single_dash_split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Option to interpret multi-char words with a single dash
+as single-letter boolean options, e.g.
+<code class="docutils literal notranslate"><span class="pre">-lh</span></code> becomes <code class="docutils literal notranslate"><span class="pre">{&quot;l&quot;:</span> <span class="pre">True,</span> <span class="pre">&quot;h&quot;:</span> <span class="pre">True}</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc._vendor.argread.ArgReadError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread.</span></span><span class="sig-name descname"><span class="pre">ArgReadError</span></span><a class="headerlink" href="#lfc._vendor.argread.ArgReadError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base error class for this package</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc._vendor.argread.FlagsArgReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread.</span></span><span class="sig-name descname"><span class="pre">FlagsArgReader</span></span><a class="headerlink" href="#lfc._vendor.argread.FlagsArgReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclass of <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a> for <a class="reference internal" href="#lfc._vendor.argread.readflags" title="lfc._vendor.argread.readflags"><code class="xref py py-func docutils literal notranslate"><span class="pre">readflags()</span></code></a></p>
+<p>The class attribute <code class="docutils literal notranslate"><span class="pre">FlagsArgRead.single_dash_split</span></code> is set to
+<code class="docutils literal notranslate"><span class="pre">True</span></code> so that <code class="docutils literal notranslate"><span class="pre">-opt</span> <span class="pre">val</span></code> is interpreted as</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;o&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>and <code class="docutils literal notranslate"><span class="pre">&quot;val&quot;</span></code> becomes an argument.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.FlagsArgReader.single_dash_split">
+<span class="sig-name descname"><span class="pre">single_dash_split</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#lfc._vendor.argread.FlagsArgReader.single_dash_split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Option to interpret multi-char words with a single dash
+as single-letter boolean options, e.g.
+<code class="docutils literal notranslate"><span class="pre">-lh</span></code> becomes <code class="docutils literal notranslate"><span class="pre">{&quot;l&quot;:</span> <span class="pre">True,</span> <span class="pre">&quot;h&quot;:</span> <span class="pre">True}</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc._vendor.argread.KeysArgReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread.</span></span><span class="sig-name descname"><span class="pre">KeysArgReader</span></span><a class="headerlink" href="#lfc._vendor.argread.KeysArgReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclass of <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a> for <a class="reference internal" href="#lfc._vendor.argread.readkeys" title="lfc._vendor.argread.readkeys"><code class="xref py py-func docutils literal notranslate"><span class="pre">readkeys()</span></code></a></p>
+<p>The class attribute <code class="docutils literal notranslate"><span class="pre">KeysArgRead.single_dash_split</span></code> is set to
+<code class="docutils literal notranslate"><span class="pre">False</span></code> so that <code class="docutils literal notranslate"><span class="pre">-opt</span> <span class="pre">val</span></code> is interpreted as</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;opt&quot;</span><span class="p">:</span> <span class="s2">&quot;val&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.KeysArgReader.single_dash_split">
+<span class="sig-name descname"><span class="pre">single_dash_split</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#lfc._vendor.argread.KeysArgReader.single_dash_split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Option to interpret multi-char words with a single dash
+as single-letter boolean options, e.g.
+<code class="docutils literal notranslate"><span class="pre">-lh</span></code> becomes <code class="docutils literal notranslate"><span class="pre">{&quot;l&quot;:</span> <span class="pre">True,</span> <span class="pre">&quot;h&quot;:</span> <span class="pre">True}</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc._vendor.argread.TarFlagsArgReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread.</span></span><span class="sig-name descname"><span class="pre">TarFlagsArgReader</span></span><a class="headerlink" href="#lfc._vendor.argread.TarFlagsArgReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclass of <a class="reference internal" href="#lfc._vendor.argread.ArgReader" title="lfc._vendor.argread.ArgReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgReader</span></code></a> for <a class="reference internal" href="#lfc._vendor.argread.readflags" title="lfc._vendor.argread.readflags"><code class="xref py py-func docutils literal notranslate"><span class="pre">readflags()</span></code></a></p>
+<p>The class attributes are</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">TarArgRead</span><span class="o">.</span><span class="n">single_dash_split</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">TarArgRead</span><span class="o">.</span><span class="n">single_dash_lastkey</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>so that <code class="docutils literal notranslate"><span class="pre">-opt</span> <span class="pre">val</span></code> is interpreted as</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;o&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;val&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.TarFlagsArgReader.single_dash_lastkey">
+<span class="sig-name descname"><span class="pre">single_dash_lastkey</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#lfc._vendor.argread.TarFlagsArgReader.single_dash_lastkey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Option to interpret multi-char words with a single dash
+the way POSIX command <code class="docutils literal notranslate"><span class="pre">tar</span></code> does, e.g.
+<code class="docutils literal notranslate"><span class="pre">-cvf</span> <span class="pre">val</span></code> becomes <code class="docutils literal notranslate"><span class="pre">{&quot;c&quot;:</span> <span class="pre">True,</span> <span class="pre">&quot;v&quot;:</span> <span class="pre">True,</span> <span class="pre">&quot;f&quot;:</span> <span class="pre">&quot;val&quot;}</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread.TarFlagsArgReader.single_dash_split">
+<span class="sig-name descname"><span class="pre">single_dash_split</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#lfc._vendor.argread.TarFlagsArgReader.single_dash_split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Option to interpret multi-char words with a single dash
+as single-letter boolean options, e.g.
+<code class="docutils literal notranslate"><span class="pre">-lh</span></code> becomes <code class="docutils literal notranslate"><span class="pre">{&quot;l&quot;:</span> <span class="pre">True,</span> <span class="pre">&quot;h&quot;:</span> <span class="pre">True}</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.argread.readflags">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread.</span></span><span class="sig-name descname"><span class="pre">readflags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread.readflags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse args where <code class="docutils literal notranslate"><span class="pre">-cj</span></code> becomes <code class="docutils literal notranslate"><span class="pre">c=True,</span> <span class="pre">j=True</span></code></p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">kw</span> <span class="o">=</span> <span class="n">readflags</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>argv</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of args other than <code class="docutils literal notranslate"><span class="pre">sys.argv</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>a</em>: <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of positional args</p>
+</dd>
+<dt><em>kw</em>: <a class="reference internal" href="../python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference internal" href="../python.html#bool" title="bool"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</dt><dd><p>Keyword arguments</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2021-12-01 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.argread.readflagstar">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread.</span></span><span class="sig-name descname"><span class="pre">readflagstar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread.readflagstar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse args where <code class="docutils literal notranslate"><span class="pre">-cf</span> <span class="pre">a</span></code> becomes <code class="docutils literal notranslate"><span class="pre">c=True,</span> <span class="pre">f=&quot;a&quot;</span></code></p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">kw</span> <span class="o">=</span> <span class="n">readflags</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>argv</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of args other than <code class="docutils literal notranslate"><span class="pre">sys.argv</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>a</em>: <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of positional args</p>
+</dd>
+<dt><em>kw</em>: <a class="reference internal" href="../python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference internal" href="../python.html#bool" title="bool"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</dt><dd><p>Keyword arguments</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2021-12-01 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lfc._vendor.argread.readkeys">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread.</span></span><span class="sig-name descname"><span class="pre">readkeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread.readkeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse args where <code class="docutils literal notranslate"><span class="pre">-cj</span></code> becomes <code class="docutils literal notranslate"><span class="pre">cj=True</span></code></p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">kw</span> <span class="o">=</span> <span class="n">readkeys</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>argv</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of args other than <code class="docutils literal notranslate"><span class="pre">sys.argv</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>a</em>: <a class="reference internal" href="../python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>List of positional args</p>
+</dd>
+<dt><em>kw</em>: <a class="reference internal" href="../python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference internal" href="../python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference internal" href="../python.html#bool" title="bool"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]</dt><dd><p>Keyword arguments</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Versions<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>2021-12-01 <code class="docutils literal notranslate"><span class="pre">&#64;ddalle</span></code>: v1.0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="clitext.html"><code class="docutils literal notranslate"><span class="pre">argread.clitext</span></code>: Process help messages for console output</a></li>
+</ul>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../lfcerror.html"
+                          title="previous chapter"><code class="docutils literal notranslate"><span class="pre">lfcerror</span></code>: Errors for <code class="xref py py-mod docutils literal notranslate"><span class="pre">lfc</span></code> modules</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="clitext.html"
+                          title="next chapter"><code class="docutils literal notranslate"><span class="pre">argread.clitext</span></code>: Process help messages for console output</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/api/argread/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="clitext.html" title="argread.clitext: Process help messages for console output"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../lfcerror.html" title="lfcerror: Errors for lfc modules"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">lfc</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">argread</span></code>: Parse command-line arguments and options</a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>

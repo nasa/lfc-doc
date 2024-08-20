@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>lfcerror: Errors for lfc modules &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="argread: Parse command-line arguments and options" href="argread/index.html" />
+    <link rel="prev" title="lfcclone: Command-line interface for lfc-clone" href="lfcclone.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="argread/index.html" title="argread: Parse command-line arguments and options"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lfcclone.html" title="lfcclone: Command-line interface for lfc-clone"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lfc.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">lfcerror</span></code>: Errors for <code class="xref py py-mod docutils literal notranslate"><span class="pre">lfc</span></code> modules</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-lfc.lfcerror"></span><section id="lfcerror-errors-for-lfc-modules">
+<h1><code class="docutils literal notranslate"><span class="pre">lfcerror</span></code>: Errors for <a class="reference internal" href="lfc.html#module-lfc" title="lfc"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lfc</span></code></a> modules<a class="headerlink" href="#lfcerror-errors-for-lfc-modules" title="Permalink to this heading">¶</a></h1>
+<p>This module provides a collection of error types relevant to the
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">gitutils</span></code> package. They are essentially the same as standard error
+types such as <code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeError</span></code>, etc. but with an
+extra parent of <code class="xref py py-class docutils literal notranslate"><span class="pre">GitutilsError</span></code> to enable catching all errors
+specifically raised by this package</p>
+</section>
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc.lfcerror.LFCCheckoutError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc.lfcerror.</span></span><span class="sig-name descname"><span class="pre">LFCCheckoutError</span></span><a class="headerlink" href="#lfc.lfcerror.LFCCheckoutError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error class for lfc-checkout commands</p>
+<p>Usually raised if an <code class="docutils literal notranslate"><span class="pre">lfc</span> <span class="pre">checkout</span></code> would delete an actual large
+file that is not in the cache</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc.lfcerror.LFCCloneError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc.lfcerror.</span></span><span class="sig-name descname"><span class="pre">LFCCloneError</span></span><a class="headerlink" href="#lfc.lfcerror.LFCCloneError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error class for lfc-clone commands</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc.lfcerror.LFCValueError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc.lfcerror.</span></span><span class="sig-name descname"><span class="pre">LFCValueError</span></span><a class="headerlink" href="#lfc.lfcerror.LFCValueError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error class for wrong values in LFC</p>
+</dd></dl>
+
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="lfcclone.html"
+                          title="previous chapter"><code class="docutils literal notranslate"><span class="pre">lfcclone</span></code>: Command-line interface for <code class="docutils literal notranslate"><span class="pre">lfc-clone</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="argread/index.html"
+                          title="next chapter"><code class="docutils literal notranslate"><span class="pre">argread</span></code>: Parse command-line arguments and options</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/lfcerror.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="argread/index.html" title="argread: Parse command-line arguments and options"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lfcclone.html" title="lfcclone: Command-line interface for lfc-clone"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="lfc.html" ><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">lfcerror</span></code>: Errors for <code class="xref py py-mod docutils literal notranslate"><span class="pre">lfc</span></code> modules</a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>

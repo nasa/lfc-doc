@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>lfc: A git extension for large files &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <link rel="icon" href="_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1. Getting started with LFC" href="examples/getting-started.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples/getting-started.html" title="1. Getting started with LFC"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">lfc</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension for large files</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="lfc-a-git-extension-for-large-files">
+<h1><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension for large files<a class="headerlink" href="#lfc-a-git-extension-for-large-files" title="Permalink to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">lfc</span></code>, which stands for “Large File Control,” is an add-on for
+<a class="reference external" href="https://git-scm.com/">git</a> that provides a method of tracking large files in
+git repositories. It is inspired by <a class="reference external" href="https://dvc.org">dvc</a> but is simpler and
+has a different feature set.</p>
+<p>The way it works is that users declare individual files “large,” which means
+that when users clone, pull, or fetch from a repo, those files are not
+automatically downloaded but instead can be retrieved on-demand. This has two
+main advantages:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>you can clone a repo with large files quickly, but without the large
+files (for example to work on an input file); and</p></li>
+<li><p>in cases where the large file(s) is (are) needed, you only need the most
+recent version instead of the whole history of that file.</p></li>
+</ul>
+</div></blockquote>
+<p>In general, LFC is for any project that uses git but also generates large files
+or even small files that happen to be binary. Here are some specific example
+use cases where LFC might be useful.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>You’re working in computational fluid dynamics (CFD) that requires very
+large inputs and produces even larger outputs, and you’d like to make
+the whole process reproducible without resorting to <em>ad hoc</em> scripts.</p></li>
+<li><p>You’re a 21st-century developer using modern programming tools and git
+version control, but your colleagues keep sending you Word and Excel
+files that are the inputs to your process. You can use LFC to track
+those documents in a traceable and reliable way.</p></li>
+<li><p>You have a process that generates binary output files and you’d like to
+keep track of all the different versions of those files without having
+to store all of them locally.</p></li>
+<li><p>You have a repo that generates some binary files (which may or may not
+be “large”), for example a picture, every day. You’d like users to be
+able to clone the repo that makes and tracks those pictures but not
+have to download the entire picture-of-the-day archive when they clone
+the repo.</p></li>
+<li><p>And many others.</p></li>
+</ul>
+</div></blockquote>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/getting-started.html">1. Getting started with LFC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="story.html">2. The story of <code class="docutils literal notranslate"><span class="pre">lfc</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">3. User Manual: LFC Command Line Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-init.html">3.1. <code class="docutils literal notranslate"><span class="pre">lfc-init</span></code>: Initialize LFC repo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-remote.html">3.2. <code class="docutils literal notranslate"><span class="pre">lfc-remote</span></code>: Show or set URL to an LFC remote cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-add.html">3.3. <code class="docutils literal notranslate"><span class="pre">lfc-add</span></code>: Add or update a large file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-pull.html">3.4. <code class="docutils literal notranslate"><span class="pre">lfc-pull</span></code>: Retrieve and checkout one or more large files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-push.html">3.5. <code class="docutils literal notranslate"><span class="pre">lfc-push</span></code>: Push one or more large files to remote cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-checkout.html">3.6. <code class="docutils literal notranslate"><span class="pre">lfc-checkout</span></code>: Check out a large file from cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-config.html">3.7. <code class="docutils literal notranslate"><span class="pre">lfc-config</span></code>: View or set LFC config variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-show.html">3.8. <code class="docutils literal notranslate"><span class="pre">lfc-show</span></code>: Print contents of a large file to STDOUT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-ls-files.html">3.9. <code class="docutils literal notranslate"><span class="pre">lfc-ls-files</span></code>: List large files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-set-mode.html">3.10. <code class="docutils literal notranslate"><span class="pre">lfc-set-mode</span></code>: Set the mode of one or more LFC files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-clone.html">3.11. <code class="docutils literal notranslate"><span class="pre">lfc-clone</span></code>: Clone a repo (using git) and pull all mode-2 LFC files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-auto-pull.html">3.12. <code class="docutils literal notranslate"><span class="pre">lfc-auto-pull</span></code>: Pull all mode-2 files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-auto-push.html">3.13. <code class="docutils literal notranslate"><span class="pre">lfc-auto-push</span></code>: Push all mode-2 files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-install-hooks.html">3.14. <code class="docutils literal notranslate"><span class="pre">lfc-install-hooks</span></code>: Install LFC git-hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/lfc-replace-dvc.html">3.15. <code class="docutils literal notranslate"><span class="pre">lfc-replace-dvc</span></code>: Replace any DVC settings and file names</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p><strong>lfc Python package:</strong></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/lfc.html"><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension to track large files</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/cli.html"><code class="docutils literal notranslate"><span class="pre">cli</span></code>: Command-line interface to <code class="docutils literal notranslate"><span class="pre">lfc</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/lfcrepo.html"><code class="docutils literal notranslate"><span class="pre">lfcrepo</span></code>: Interface to git repos with large-file control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/lfcclone.html"><code class="docutils literal notranslate"><span class="pre">lfcclone</span></code>: Command-line interface for <code class="docutils literal notranslate"><span class="pre">lfc-clone</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/lfcerror.html"><code class="docutils literal notranslate"><span class="pre">lfcerror</span></code>: Errors for <code class="xref py py-mod docutils literal notranslate"><span class="pre">lfc</span></code> modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/argread/index.html"><code class="docutils literal notranslate"><span class="pre">argread</span></code>: Parse command-line arguments and options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/argread/clitext.html"><code class="docutils literal notranslate"><span class="pre">argread.clitext</span></code>: Process help messages for console output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/kwparse.html"><code class="docutils literal notranslate"><span class="pre">kwparse</span></code>: Tools to map, parse, and validate keyword arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/gitutils/index.html"><code class="docutils literal notranslate"><span class="pre">gitutils</span></code>: Python interface to git repositories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/gitutils/gitrepo.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gitutils.gitrepo</span></code>: Interact with git repos using system interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/gitutils/giterror.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gitutils.giterror</span></code>: Errors for <code class="xref py py-mod docutils literal notranslate"><span class="pre">gitutils</span></code> Git repo tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/shellutils.html"><code class="docutils literal notranslate"><span class="pre">shellutils</span></code>: System calls with STDOUT capture, SFTP, and more</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/python.html">Links to built-in Python features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/standardlib.html">Links to built-in Python standard library features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/thirdparty.html">Links to third-party modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/thirdparty.html#numpy-the-fundamental-package-for-scientific-computing-with-python"><code class="docutils literal notranslate"><span class="pre">numpy</span></code>: The fundamental package for scientific computing with Python</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+<p><strong>Notices</strong></p>
+<p>Copyright © 2024 United States Government as represented by the Administrator
+of the National Aeronautics and Space Administration. All Rights Reserved.</p>
+<p><strong>Disclaimers</strong></p>
+<p>No Warranty: THE SUBJECT SOFTWARE IS PROVIDED “AS IS” WITHOUT ANY WARRANTY OF
+ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED
+TO, ANY WARRANTY THAT THE SUBJECT SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY
+IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR
+FREEDOM FROM INFRINGEMENT, ANY WARRANTY THAT THE SUBJECT SOFTWARE WILL BE ERROR
+FREE, OR ANY WARRANTY THAT DOCUMENTATION, IF PROVIDED, WILL CONFORM TO THE
+SUBJECT SOFTWARE. THIS AGREEMENT DOES NOT, IN ANY MANNER, CONSTITUTE AN
+ENDORSEMENT BY GOVERNMENT AGENCY OR ANY PRIOR RECIPIENT OF ANY RESULTS,
+RESULTING DESIGNS, HARDWARE, SOFTWARE PRODUCTS OR ANY OTHER APPLICATIONS
+RESULTING FROM USE OF THE SUBJECT SOFTWARE. FURTHER, GOVERNMENT AGENCY
+DISCLAIMS ALL WARRANTIES AND LIABILITIES REGARDING THIRD-PARTY SOFTWARE, IF
+PRESENT IN THE ORIGINAL SOFTWARE, AND DISTRIBUTES IT “AS IS.”</p>
+<p>Waiver and Indemnity: RECIPIENT AGREES TO WAIVE ANY AND ALL CLAIMS AGAINST THE
+UNITED STATES GOVERNMENT, ITS CONTRACTORS AND SUBCONTRACTORS, AS WELL AS ANY
+PRIOR RECIPIENT. IF RECIPIENT’S USE OF THE SUBJECT SOFTWARE RESULTS IN ANY
+LIABILITIES, DEMANDS, DAMAGES, EXPENSES OR LOSSES ARISING FROM SUCH USE,
+INCLUDING ANY DAMAGES FROM PRODUCTS BASED ON, OR RESULTING FROM, RECIPIENT’S
+USE OF THE SUBJECT SOFTWARE, RECIPIENT SHALL INDEMNIFY AND HOLD HARMLESS THE
+UNITED STATES GOVERNMENT, ITS CONTRACTORS AND SUBCONTRACTORS, AS WELL AS ANY
+PRIOR RECIPIENT, TO THE EXTENT PERMITTED BY LAW. RECIPIENT’S SOLE REMEDY FOR
+ANY SUCH MATTER SHALL BE THE IMMEDIATE, UNILATERAL TERMINATION OF THIS
+AGREEMENT.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="LICENSE.html">NASA OPEN SOURCE AGREEMENT VERSION 1.3</a></li>
+</ul>
+</div>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h3><a href="#">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension for large files</a><ul>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="examples/getting-started.html"
+                          title="next chapter"><span class="section-number">1. </span>Getting started with LFC</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples/getting-started.html" title="1. Getting started with LFC"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">lfc</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">lfc</span></code>: A git extension for large files</a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>

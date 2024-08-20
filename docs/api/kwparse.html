@@ -1,0 +1,1458 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>kwparse: Tools to map, parse, and validate keyword arguments &#8212; lfc: a git extension for large files</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/NASA_logo_icon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="gitutils: Python interface to git repositories" href="gitutils/index.html" />
+    <link rel="prev" title="argread.clitext: Process help messages for console output" href="argread/clitext.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="gitutils/index.html" title="gitutils: Python interface to git repositories"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="argread/clitext.html" title="argread.clitext: Process help messages for console output"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">kwparse</span></code>: Tools to map, parse, and validate keyword arguments</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-lfc._vendor.argread._vendor.kwparse"></span><section id="kwparse-tools-to-map-parse-and-validate-keyword-arguments">
+<h1><code class="docutils literal notranslate"><span class="pre">kwparse</span></code>: Tools to map, parse, and validate keyword arguments<a class="headerlink" href="#kwparse-tools-to-map-parse-and-validate-keyword-arguments" title="Permalink to this heading">¶</a></h1>
+<p>This module provides the class <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a> that allows for
+convenient and powerful parsing of functions that use the <code class="docutils literal notranslate"><span class="pre">**kw</span></code>
+convention in their signature, such as</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Users of this module create subclasses of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a> that
+process the expected keyword arguments to <code class="xref py py-func docutils literal notranslate"><span class="pre">f()</span></code>. The capabilities
+of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a> include</p>
+<ul class="simple">
+<li><p>only allowing specific keys (<a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optlist" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optlist"><code class="xref py py-data docutils literal notranslate"><span class="pre">KwargParser._optlist</span></code></a>)</p></li>
+<li><p>mapping kwargs to alternate names, e.g. using <em>v</em> as a shortcut for
+<em>verbose</em> (<a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optmap" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optmap"><code class="xref py py-data docutils literal notranslate"><span class="pre">KwargParser._optmap</span></code></a>)</p></li>
+<li><p>specifying the type(s) allowed for specific options
+(<a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._opttypes" title="lfc._vendor.argread._vendor.kwparse.KwargParser._opttypes"><code class="xref py py-data docutils literal notranslate"><span class="pre">KwargParser._opttypes</span></code></a>)</p></li>
+<li><p>creating aliases for values (<a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optvalmap" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optvalmap"><code class="xref py py-data docutils literal notranslate"><span class="pre">KwargParser._optvalmap</span></code></a>)</p></li>
+<li><p>calling converter functions (e.g. <code class="docutils literal notranslate"><span class="pre">int()</span></code> to convert a <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+to an <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) (<a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters"><code class="xref py py-data docutils literal notranslate"><span class="pre">KwargParser._optconverters</span></code></a>)</p></li>
+</ul>
+<p>Suppose you have a function</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Where <em>a</em> should be a <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>b</em> should be an <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, and
+the only kwargs are <em>verbose</em> and <em>help</em>, which should both be
+<a class="reference internal" href="python.html#bool" title="bool"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>. However, users can use <em>h</em> as an alias for <em>help</em> and <em>v</em>
+for <em>verbose</em>. Then we could write a subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a> to
+parse and validate args to this function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FKwargs</span><span class="p">(</span><span class="n">KwargParser</span><span class="p">):</span>
+    <span class="n">_optlist</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;help&quot;</span><span class="p">,</span> <span class="s2">&quot;verbose&quot;</span><span class="p">)</span>
+    <span class="n">_optmap</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="s2">&quot;help&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="s2">&quot;verbose&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">_opttypes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;help&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">_arglist</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">)</span>
+    <span class="n">_nargmin</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">_nargmax</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>Here is how this parser handles an example with expected inputs.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span> <span class="o">=</span> <span class="n">FKwargs</span><span class="p">(</span><span class="s2">&quot;me&quot;</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+<span class="go">{&#39;verbose&#39;: True}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">get_args</span><span class="p">())</span>
+<span class="go">(&#39;me&#39;, 33)</span>
+</pre></div>
+</div>
+<p>In many cases it is preferable to use</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.INT_TYPES" title="lfc._vendor.argread._vendor.kwparse.INT_TYPES"><code class="xref py py-data docutils literal notranslate"><span class="pre">INT_TYPES</span></code></a> instead of <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.FLOAT_TYPES" title="lfc._vendor.argread._vendor.kwparse.FLOAT_TYPES"><code class="xref py py-data docutils literal notranslate"><span class="pre">FLOAT_TYPES</span></code></a> instead of <a class="reference internal" href="python.html#float" title="float"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.BOOL_TYPES" title="lfc._vendor.argread._vendor.kwparse.BOOL_TYPES"><code class="xref py py-data docutils literal notranslate"><span class="pre">BOOL_TYPES</span></code></a> instead of <a class="reference internal" href="python.html#bool" title="bool"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, and</p></li>
+<li><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.STR_TYPES" title="lfc._vendor.argread._vendor.kwparse.STR_TYPES"><code class="xref py py-data docutils literal notranslate"><span class="pre">STR_TYPES</span></code></a> instead of <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p></li>
+</ul>
+<p>within <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._opttypes" title="lfc._vendor.argread._vendor.kwparse.KwargParser._opttypes"><code class="xref py py-data docutils literal notranslate"><span class="pre">KwargParser._opttypes</span></code></a>, e.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FKwargs</span><span class="p">(</span><span class="n">KwargParser</span><span class="p">):</span>
+    <span class="n">_optlist</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;help&quot;</span><span class="p">,</span> <span class="s2">&quot;verbose&quot;</span><span class="p">)</span>
+    <span class="n">_optmap</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="s2">&quot;help&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="s2">&quot;verbose&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">_opttypes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="n">INT_TYPES</span><span class="p">,</span>
+        <span class="s2">&quot;help&quot;</span><span class="p">:</span> <span class="n">BOOL_TYPES</span><span class="p">,</span>
+        <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="n">BOOL_TYPES</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">_arglist</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">)</span>
+    <span class="n">_nargmin</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">_nargmax</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>so that values taken from <a class="reference internal" href="thirdparty.html#module-numpy" title="numpy"><code class="xref py py-mod docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays are also recognized as
+valid “integers,” “floats,” or “booleans.”</p>
+<p>Here are some examples of how FKwargs might handle bad inputs.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">FKwargs</span><span class="p">(</span><span class="s2">&quot;my&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">File &quot;kwparse.py&quot;, line 172, in wrapper</span>
+<span class="go">    raise err.__class__(msg) from None</span>
+<span class="go">kwparse.KWTypeError: FKwargs() takes 2 arguments, but 1 were given</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">FKwargs</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">File &quot;kwparse.py&quot;, line 172, in wrapper</span>
+<span class="go">    raise err.__class__(msg) from None</span>
+<span class="go">kwparse.KWTypeError: FKwargs() arg 0 (name=&#39;a&#39;): got type &#39;int&#39;;</span>
+<span class="go">expected &#39;str&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">FKwargs</span><span class="p">(</span><span class="s2">&quot;my&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">File &quot;kwparse.py&quot;, line 172, in wrapper</span>
+<span class="go">    raise err.__class__(msg) from None</span>
+<span class="go">kwparse.KWNameError: FKwargs() unknown kwarg &#39;b&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">FKwargs</span><span class="p">(</span><span class="s2">&quot;my&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">File &quot;kwparse.py&quot;, line 172, in wrapper</span>
+<span class="go">    raise err.__class__(msg) from None</span>
+<span class="go">kwparse.KWTypeError: FKwargs() kwarg &#39;help&#39;: got type &#39;int&#39;;</span>
+<span class="go">expected &#39;bool&#39;</span>
+</pre></div>
+</div>
+<p>In order to use an instance of this <code class="xref py py-class docutils literal notranslate"><span class="pre">FKwargs</span></code> there are several
+approaches. The first is to call the parser class directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="n">opts</span> <span class="o">=</span> <span class="n">FKwargs</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Another method is to use FKwargs as a decorator</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@FKwargs</span><span class="o">.</span><span class="n">parse</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>The decorator option ensures that <em>a</em>, <em>b</em>, and <em>kw</em> have all been
+validated. Users can then use <code class="docutils literal notranslate"><span class="pre">kw.get(&quot;help&quot;)</span></code> without needing to
+check for <em>h</em>.</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread._vendor.kwparse.</span></span><span class="sig-name descname"><span class="pre">KwargParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to parse args and keyword args, check types, etc.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span> <span class="o">=</span> <span class="n">KwargParser</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>a</em>: <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>Arbitrary tuple of positional parameters to a function</p>
+</dd>
+<dt><em>kw</em>: <a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Arbitrary dict of keyword arguments to a function</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Dictionary of validated kwargs and positional parameters</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.argvals" title="lfc._vendor.argread._vendor.kwparse.KwargParser.argvals"><code class="xref py py-attr docutils literal notranslate"><span class="pre">argvals</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._arglist">
+<span class="sig-name descname"><span class="pre">_arglist</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._arglist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Names for positional parameters (in order):
+<a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="python.html#set" title="set"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._name">
+<span class="sig-name descname"><span class="pre">_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subclass name used in error messages
+<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._nargmax">
+<span class="sig-name descname"><span class="pre">_nargmax</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._nargmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum number of positional parameters:
+<code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> &gt; 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._nargmin">
+<span class="sig-name descname"><span class="pre">_nargmin</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._nargmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimum required number of positional parameters:
+<a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> &gt;= 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters">
+<span class="sig-name descname"><span class="pre">_optconverters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Functions to convert raw value of specified options:
+<a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference internal" href="python.html#callable" title="callable"><code class="xref py py-class docutils literal notranslate"><span class="pre">callable</span></code></a>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._optlist">
+<span class="sig-name descname"><span class="pre">_optlist</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allowed keyword (option) names:
+(<a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> | <a class="reference internal" href="python.html#set" title="set"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a>)[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._optlistreq">
+<span class="sig-name descname"><span class="pre">_optlistreq</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optlistreq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required kwargs:
+<a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._optmap">
+<span class="sig-name descname"><span class="pre">_optmap</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aliases for kwarg names; key gets replaced with value:
+<a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._opttypes">
+<span class="sig-name descname"><span class="pre">_opttypes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._opttypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allowed types for option values, after using converter:
+<a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a> | <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a>]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._optvalmap">
+<span class="sig-name descname"><span class="pre">_optvalmap</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optvalmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aliases for option values:
+<a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._optvals">
+<span class="sig-name descname"><span class="pre">_optvals</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optvals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specified allowed values for specified options:
+<a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> | <a class="reference internal" href="python.html#set" title="set"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._rawopttypes">
+<span class="sig-name descname"><span class="pre">_rawopttypes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._rawopttypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allowed types for option values, before using converter:
+<a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a> | <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a>]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser._rc">
+<span class="sig-name descname"><span class="pre">_rc</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._rc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default values for specified options:
+<a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a>]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.apply_argconverter">
+<span class="sig-name descname"><span class="pre">apply_argconverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">argname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rawval</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.apply_argconverter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply option converter function to raw positional arg value</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">apply_argconverter</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>j</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Positional parameter (arg) index</p>
+</dd>
+<dt><em>argname</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Positional parameter (arg) name, if appropriate</p>
+</dd>
+<dt><em>rawval</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value of option, before <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters"><code class="xref py py-data docutils literal notranslate"><span class="pre">_optconverters</span></code></a></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>val</em>: {<em>rawval</em>} | <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Result of calling <em>optconverter</em> for <em>opt</em> on <em>rawval</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KWTypeError" title="lfc._vendor.argread._vendor.kwparse.KWTypeError"><code class="xref py py-class docutils literal notranslate"><span class="pre">KWTypeError</span></code></a> if <em>optconverter</em> for <em>opt</em> is not
+callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.apply_optconverter">
+<span class="sig-name descname"><span class="pre">apply_optconverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rawval</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.apply_optconverter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply option converter function to raw value</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">apply_optconverter</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>De-aliased option name</p>
+</dd>
+<dt><em>rawval</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Raw user value for <em>opt</em> before using <em>optconverter</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>val</em>: {<em>rawval</em>} | <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Result of calling <em>optconverter</em> for <em>opt</em> on <em>rawval</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KWTypeError" title="lfc._vendor.argread._vendor.kwparse.KWTypeError"><code class="xref py py-class docutils literal notranslate"><span class="pre">KWTypeError</span></code></a> if <em>optconverter</em> for <em>opt</em> is not
+callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.apply_optmap">
+<span class="sig-name descname"><span class="pre">apply_optmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rawopt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.apply_optmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply alias to raw option name, if applicable</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opt</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">apply_optmap</span><span class="p">(</span><span class="n">rawopt</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>rawopt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Option name or alias, before <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optmap" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optmap"><code class="xref py py-data docutils literal notranslate"><span class="pre">_optmap</span></code></a></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>opt</em>: {<em>rawopt</em>} | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>De-aliased option name</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.apply_optvalmap">
+<span class="sig-name descname"><span class="pre">apply_optvalmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rawval</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.apply_optvalmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply option value map (aliases for value), if any</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">apply_optconverter</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>De-aliased option name</p>
+</dd>
+<dt><em>rawval</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Raw user value for <em>opt</em> before using <em>optconverter</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>val</em>: {<em>rawval</em>} | <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Dealiased (by <code class="docutils literal notranslate"><span class="pre">_optvalmap[opt]</span></code>) value</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.argvals">
+<span class="sig-name descname"><span class="pre">argvals</span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.argvals" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> – List of values of positional parameters
+that cannot be aliased to options (not in <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optlist" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optlist"><code class="xref py py-data docutils literal notranslate"><span class="pre">_optlist</span></code></a>)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.check_argtype">
+<span class="sig-name descname"><span class="pre">check_argtype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">argname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.check_argtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check type of positional arg after conversion function</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span><span class="o">.</span><span class="n">check_argtype</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>j</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Positional parameter (arg) index</p>
+</dd>
+<dt><em>argname</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Positional parameter (arg) name, if appropriate</p>
+</dd>
+<dt><em>val</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value for parameter in position <em>j</em>, after conversion</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KWTypeError" title="lfc._vendor.argread._vendor.kwparse.KWTypeError"><code class="xref py py-class docutils literal notranslate"><span class="pre">KWTypeError</span></code></a> if <em>val</em> has wrong type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.check_argval">
+<span class="sig-name descname"><span class="pre">check_argval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">argname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.check_argval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check positional arg value against list of recognized values</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span><span class="o">.</span><span class="n">check_optval</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>j</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Positional parameter (arg) index</p>
+</dd>
+<dt><em>argname</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Positional parameter (arg) name, if appropriate</p>
+</dd>
+<dt><em>val</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value for arg in position <em>j</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KWValueError" title="lfc._vendor.argread._vendor.kwparse.KWValueError"><code class="xref py py-class docutils literal notranslate"><span class="pre">KWValueError</span></code></a> if <em>argname</em> has an <em>optval</em> setting
+and <em>val</em> is not in it</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.check_optname">
+<span class="sig-name descname"><span class="pre">check_optname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.check_optname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check validity of an option name</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span><span class="o">.</span><span class="n">check_optname</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>De-aliased option name</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KWNameError" title="lfc._vendor.argread._vendor.kwparse.KWNameError"><code class="xref py py-class docutils literal notranslate"><span class="pre">KWNameError</span></code></a> if <em>opt</em> is not recognized</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.check_opttype">
+<span class="sig-name descname"><span class="pre">check_opttype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.check_opttype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check type of option value after conversion function</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span><span class="o">.</span><span class="n">check_opttype</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>De-aliased option name</p>
+</dd>
+<dt><em>val</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value for <em>opt</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KWTypeError" title="lfc._vendor.argread._vendor.kwparse.KWTypeError"><code class="xref py py-class docutils literal notranslate"><span class="pre">KWTypeError</span></code></a> if <em>val</em> has wrong type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.check_optval">
+<span class="sig-name descname"><span class="pre">check_optval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.check_optval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check option value against list of recognized values</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span><span class="o">.</span><span class="n">check_optval</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>De-aliased option name</p>
+</dd>
+<dt><em>val</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value for <em>opt</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KWValueError" title="lfc._vendor.argread._vendor.kwparse.KWValueError"><code class="xref py py-class docutils literal notranslate"><span class="pre">KWValueError</span></code></a> if <em>opt</em> has an <em>optval</em> setting and
+<em>val</em> is not in it</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.check_rawargtype">
+<span class="sig-name descname"><span class="pre">check_rawargtype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">argname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rawval</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.check_rawargtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check type of positional arg prior to conversion function</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span><span class="o">.</span><span class="n">check_rawargtype</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>j</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Positional parameter (arg) index</p>
+</dd>
+<dt><em>argname</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Positional parameter (arg) name, if appropriate</p>
+</dd>
+<dt><em>rawval</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value of option, before <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters"><code class="xref py py-data docutils literal notranslate"><span class="pre">_optconverters</span></code></a></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KWTypeError" title="lfc._vendor.argread._vendor.kwparse.KWTypeError"><code class="xref py py-class docutils literal notranslate"><span class="pre">KWTypeError</span></code></a> if <em>rawval</em> has wrong type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.check_rawopttype">
+<span class="sig-name descname"><span class="pre">check_rawopttype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rawval</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.check_rawopttype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check type of option value prior to conversion function</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span><span class="o">.</span><span class="n">check_rawopttype</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>De-aliased option name</p>
+</dd>
+<dt><em>rawval</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Raw user value for <em>opt</em> before using <em>optconverter</em></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KWTypeError" title="lfc._vendor.argread._vendor.kwparse.KWTypeError"><code class="xref py py-class docutils literal notranslate"><span class="pre">KWTypeError</span></code></a> if <em>rawval</em> has wrong type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.get_argname">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_argname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.get_argname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get name for an argument by index, if applicable</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">argname</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_argname</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+<dt><em>j</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Positional parameter (arg) index</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>argname</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Argument option name, if applicable</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.get_args">
+<span class="sig-name descname"><span class="pre">get_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#tuple" title="tuple"><span class="pre">tuple</span></a></span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.get_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the current positional parameter values</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">args</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">get_args</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>args</em>: <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a>]</dt><dd><p>Current values of positional parameters</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.get_cls_name">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_cls_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.get_cls_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a name to use for a given class</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">clsname</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_cls_name</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>clsname</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p><em>cls._name</em> if set, else <em>cls.__name__</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.get_kwargs">
+<span class="sig-name descname"><span class="pre">get_kwargs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#dict" title="dict"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.get_kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get dictionary of kwargs, applying defaults</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">get_kwargs</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>kwargs</em>: <a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Keyword arguments and values currently parsed</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.get_opt">
+<span class="sig-name descname"><span class="pre">get_opt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">vdef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.get_opt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get value of one option</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">get_opt</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">vdef</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of option</p>
+</dd>
+<dt><em>vdef</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Default value if <em>opt</em> not found in <em>opts</em> or
+<a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._rc" title="lfc._vendor.argread._vendor.kwparse.KwargParser._rc"><code class="xref py py-data docutils literal notranslate"><span class="pre">_rc</span></code></a></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.get_optconverter">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_optconverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.get_optconverter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get option value converter, if any, for option <em>opt</em></p>
+<p>Output must be a callable function that takes one argument</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">func</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_optconverter</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Full (non-aliased) name of option</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>func</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">function</span></code> | <strong>callable</strong></dt><dd><p>Function or other callable object</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.get_optlist">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_optlist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#set" title="set"><span class="pre">set</span></a></span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.get_optlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of allowed options from <em>cls</em> and its bases</p>
+<p>This combines the <code class="docutils literal notranslate"><span class="pre">_optlist</span></code> attribute from <em>cls</em> and any
+bases it might have that are also subclasses of
+<a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a>.</p>
+<p>If <em>optlist</em> is an empty set, then no constraints are applied to
+option names.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">optlist</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_opttype</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>optlist</em>: <a class="reference internal" href="python.html#set" title="set"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a>[<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Single type or list of types for <em>opt</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.get_opttype">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_opttype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.get_opttype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the type(s) allowed for the value of option <em>opt</em></p>
+<p>If <em>opttype</em> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, no constraints are placed on the
+value of <em>opt</em>. The “value” differs from the “raw value” in that
+the “value” is after any converters have been applied.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opttype</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_opttype</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Full (non-aliased) name of option</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>opttype</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a> | <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>Single type or list of types for <em>opt</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.get_optvalmap">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_optvalmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.get_optvalmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get option value aliases, if any, for option <em>opt</em></p>
+<p>Output must be a <a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">valmap</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_optvalmap</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Full (non-aliased) name of option</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>valmap</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Map of alias values for <em>opt</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.get_optvals">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_optvals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.get_optvals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a set/list/tuple of allowed values for option <em>opt</em></p>
+<p>If <em>optvals</em> is not <code class="docutils literal notranslate"><span class="pre">None</span></code>, the full (post-optconverter) value
+will be checked if it is <code class="docutils literal notranslate"><span class="pre">in</span></code> <em>optvals</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">optvals</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_optvals</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Full (non-aliased) name of option</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>optvals</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#set" title="set"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a> | <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>Tuple, list, set, or frozenset of allowed values</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.get_rawopttype">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_rawopttype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.get_rawopttype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the type(s) allowed for the raw value of option <em>opt</em></p>
+<p>If <em>opttype</em> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, no constraints are placed on the raw
+value of <em>opt</em>. The “raw value” is the value for <em>opt</em> before
+any converters have been applied.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opttype</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_rawopttype</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Full (non-aliased) name of option</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>opttype</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a> | <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>Single type or list of types for raw <em>opt</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.getx_cls_arg">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getx_cls_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">argname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vdef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.getx_cls_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get <a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> class attribute for positional parameter</p>
+<p>If <em>argname</em> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, the parameter (arg) has no name, and
+only <code class="docutils literal notranslate"><span class="pre">&quot;_arg_default_&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;_default_&quot;</span></code> can be used from
+<code class="docutils literal notranslate"><span class="pre">getattr(cls,</span> <span class="pre">attr)</span></code>.</p>
+<p>Otherwise, this will look in the bases of <em>cls</em> if
+<code class="docutils literal notranslate"><span class="pre">getattr(cls,</span> <span class="pre">attr)</span></code> does not have <em>argname</em>. If <em>cls</em> is a
+subclass of another <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a> class, it will search
+through the bases of <em>cls</em> until the first time it finds a class
+attribute <em>attr</em> that is a <a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> containing <em>key</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">getx_cls_key</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">vdef</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+<dt><em>attr</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of class attribute to search</p>
+</dd>
+<dt><em>key</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Key name in <em>cls.__dict__[attr]</em></p>
+</dd>
+<dt><em>vdef</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Default value to use if not found in class attributes</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>v</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">ojbect</span></code></dt><dd><p>Any value, <code class="docutils literal notranslate"><span class="pre">None</span></code> if not found</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.getx_cls_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getx_cls_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#dict" title="dict"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.getx_cls_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get combined <a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> for <em>cls</em> and its bases</p>
+<p>This allows a subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a> to only add to
+the <code class="docutils literal notranslate"><span class="pre">_opttypes</span></code> or <code class="docutils literal notranslate"><span class="pre">_optmap</span></code> attribute rather than manually
+include contents of all the bases.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">clsdict</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">getx_cls_dict</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+<dt><em>attr</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of class attribute to search</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>clsdict</em>: <a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Combination of <code class="docutils literal notranslate"><span class="pre">getattr(cls,</span> <span class="pre">attr)</span></code> and
+<code class="docutils literal notranslate"><span class="pre">getattr(base,</span> <span class="pre">attr)</span></code> for each <code class="docutils literal notranslate"><span class="pre">base</span></code> in
+<code class="docutils literal notranslate"><span class="pre">cls.__bases__</span></code>, etc.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.getx_cls_key">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getx_cls_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">vdef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.getx_cls_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Access <em>key</em> from a <a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> class attribute</p>
+<p>This will look in the bases of <em>cls</em> if <code class="docutils literal notranslate"><span class="pre">getattr(cls,</span> <span class="pre">attr)</span></code>
+does not have <em>key</em>. If <em>cls</em> is a subclass of another
+<a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a> class, it will search through the bases of
+<em>cls</em> until the first time it finds a class attribute <em>attr</em>
+that is a <a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> containing <em>key</em>.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">getx_cls_key</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">vdef</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+<dt><em>attr</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of class attribute to search</p>
+</dd>
+<dt><em>key</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Key name in <em>cls.__dict__[attr]</em></p>
+</dd>
+<dt><em>vdef</em>: {<code class="docutils literal notranslate"><span class="pre">None</span></code>} | <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Default value to use if not found in class attributes</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>v</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">ojbect</span></code></dt><dd><p>Any value, <code class="docutils literal notranslate"><span class="pre">None</span></code> if not found</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.getx_cls_set">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getx_cls_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="python.html#set" title="set"><span class="pre">set</span></a></span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.getx_cls_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get combined <a class="reference internal" href="python.html#set" title="set"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a> for <em>cls</em> and its bases</p>
+<p>This allows a subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a> to only add to
+the <code class="docutils literal notranslate"><span class="pre">_optlist</span></code> attribute rather than manually include the
+<code class="docutils literal notranslate"><span class="pre">_optlist</span></code> of all the bases.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">getx_cls_set</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+<dt><em>attr</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name of class attribute to search</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>v</em>: <a class="reference internal" href="python.html#set" title="set"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a></dt><dd><p>Combination of <code class="docutils literal notranslate"><span class="pre">getattr(cls,</span> <span class="pre">attr)</span></code> and
+<code class="docutils literal notranslate"><span class="pre">getattr(base,</span> <span class="pre">attr)</span></code> for each <code class="docutils literal notranslate"><span class="pre">base</span></code> in
+<code class="docutils literal notranslate"><span class="pre">cls.__bases__</span></code>, etc.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.init_post">
+<span class="sig-name descname"><span class="pre">init_post</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.init_post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom post-initialization hook</p>
+<p>This function is called in the standard <code class="xref py py-func docutils literal notranslate"><span class="pre">__init__()</span></code>. The
+default <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.init_post" title="lfc._vendor.argread._vendor.kwparse.KwargParser.init_post"><code class="xref py py-func docutils literal notranslate"><span class="pre">init_post()</span></code></a> does nothing. Users may define custom
+actions in <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.init_post" title="lfc._vendor.argread._vendor.kwparse.KwargParser.init_post"><code class="xref py py-func docutils literal notranslate"><span class="pre">init_post()</span></code></a> in subclasses to make certain
+changes at the end of parsing</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span><span class="o">.</span><span class="n">init_post</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.parse">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator for a function to parse and validate its inputs</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapper</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Example<span class="colon">:</span></dt>
+<dd class="field-even"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@cls</span><span class="o">.</span><span class="n">parse</span>
+<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-odd">Inputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>func</em>: <a class="reference internal" href="python.html#callable" title="callable"><code class="xref py py-class docutils literal notranslate"><span class="pre">callable</span></code></a></dt><dd><p>A function, class, or callable instance</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Outputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>cls</em>: <a class="reference internal" href="python.html#type" title="type"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a></dt><dd><p>A subclass of <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></p>
+</dd>
+<dt><em>wrap</em>: <a class="reference internal" href="python.html#callable" title="callable"><code class="xref py py-class docutils literal notranslate"><span class="pre">callable</span></code></a></dt><dd><p>A wrapped version of <em>func</em> that parses and validates
+args and kwargs according to <em>cls</em> before calling <em>func</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.set_arg">
+<span class="sig-name descname"><span class="pre">set_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rawval</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.set_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of the <em>j</em>-th positional argument</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span><span class="o">.</span><span class="n">set_arg</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>j</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> &gt;= 0</dt><dd><p>Argument index</p>
+</dd>
+<dt><em>rawval</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value for arg <em>j</em>, before <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters"><code class="xref py py-data docutils literal notranslate"><span class="pre">_optconverters</span></code></a></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.set_args">
+<span class="sig-name descname"><span class="pre">set_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.set_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the values of positional arguments</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span><span class="o">.</span><span class="n">set_args</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>args</em>: <a class="reference internal" href="python.html#list" title="list"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> | <a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>Ordered list of positional argument values</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.set_opt">
+<span class="sig-name descname"><span class="pre">set_opt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rawopt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rawval</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.set_opt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of a single option</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span><span class="o">.</span><span class="n">set_opt</span><span class="p">(</span><span class="n">rawopt</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>rawopt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name or alias of option to set</p>
+</dd>
+<dt><em>rawval</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Pre-conversion value of <em>rawopt</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.set_opts">
+<span class="sig-name descname"><span class="pre">set_opts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#dict" title="dict"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.set_opts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a collection of options</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span><span class="o">.</span><span class="n">set_opts</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>a</em>: <a class="reference internal" href="python.html#dict" title="dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Dictionary of options to update into <em>opts</em></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.validate_argval">
+<span class="sig-name descname"><span class="pre">validate_argval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#int" title="int"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">argname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rawval</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.validate_argval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate a raw positional parameter (arg) value</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">validate_argval</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">argname</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>j</em>: <a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></dt><dd><p>Argument index</p>
+</dd>
+<dt><em>argname</em>: <code class="docutils literal notranslate"><span class="pre">None</span></code> | <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Argument name, if applicable</p>
+</dd>
+<dt><em>rawval</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value of option, before <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters"><code class="xref py py-data docutils literal notranslate"><span class="pre">_optconverters</span></code></a></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>val</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Converted value, either <em>rawval</em> or
+<code class="docutils literal notranslate"><span class="pre">optconverter(rawval)</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.validate_opt">
+<span class="sig-name descname"><span class="pre">validate_opt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rawopt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rawval</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.OptPair" title="lfc._vendor.argread._vendor.kwparse.OptPair"><span class="pre">OptPair</span></a></span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.validate_opt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate a raw option name and raw value</p>
+<p>Replaces <em>rawopt</em> with non-aliased name and applies any
+<em>optconverter</em> to <em>rawval</em>. Raises an exception if option name,
+type, or value does not match expectations.</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">optpair</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">validate_opt</span><span class="p">(</span><span class="n">rawopt</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">opt</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">validate_opt</span><span class="p">(</span><span class="n">rawopt</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>rawopt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Name or alias of option, before <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optlist" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optlist"><code class="xref py py-data docutils literal notranslate"><span class="pre">_optlist</span></code></a></p>
+</dd>
+<dt><em>rawval</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value of option, before <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters"><code class="xref py py-data docutils literal notranslate"><span class="pre">_optconverters</span></code></a></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>optpair</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.OptPair" title="lfc._vendor.argread._vendor.kwparse.OptPair"><code class="xref py py-class docutils literal notranslate"><span class="pre">OptPair</span></code></a></dt><dd><p><a class="reference internal" href="python.html#tuple" title="tuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> of de-aliased option name and converted
+value</p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>De-aliased option name (after <em>optmap</em> applied)</p>
+</dd>
+<dt><em>val</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Converted value, either <em>rawval</em> or
+<code class="docutils literal notranslate"><span class="pre">optconverter(rawval)</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KwargParser.validate_optval">
+<span class="sig-name descname"><span class="pre">validate_optval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="python.html#str" title="str"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rawval</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KwargParser.validate_optval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate a raw option value</p>
+<dl class="field-list">
+<dt class="field-odd">Call<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">val</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">validate_optval</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">rawval</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt class="field-even">Inputs<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><em>opts</em>: <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser" title="lfc._vendor.argread._vendor.kwparse.KwargParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">KwargParser</span></code></a></dt><dd><p>Keyword argument parser instance</p>
+</dd>
+<dt><em>opt</em>: <a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>De-aliased option name (after <em>optmap</em> applied)</p>
+</dd>
+<dt><em>rawval</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Value of option, before <a class="reference internal" href="#lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters" title="lfc._vendor.argread._vendor.kwparse.KwargParser._optconverters"><code class="xref py py-data docutils literal notranslate"><span class="pre">_optconverters</span></code></a></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Outputs<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><em>val</em>: <a class="reference internal" href="python.html#object" title="object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></dt><dd><p>Converted value, either <em>rawval</em> or
+<code class="docutils literal notranslate"><span class="pre">optconverter(rawval)</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.BOOL_TYPES">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread._vendor.kwparse.</span></span><span class="sig-name descname"><span class="pre">BOOL_TYPES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;class</span> <span class="pre">'bool'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.bool_'&gt;)</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.BOOL_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collection of boolean-like types:
+<a class="reference internal" href="python.html#bool" title="bool"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference internal" href="thirdparty.html#numpy.bool_" title="numpy.bool_"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.bool_</span></code></a></p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.FLOAT_TYPES">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread._vendor.kwparse.</span></span><span class="sig-name descname"><span class="pre">FLOAT_TYPES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.float16'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.float32'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.float64'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.float128'&gt;)</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.FLOAT_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collection of floating-point types:
+<a class="reference internal" href="python.html#float" title="float"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>
+| <a class="reference internal" href="thirdparty.html#numpy.float16" title="numpy.float16"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.float16</span></code></a>
+| <a class="reference internal" href="thirdparty.html#numpy.float32" title="numpy.float32"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.float32</span></code></a>
+| <a class="reference internal" href="thirdparty.html#numpy.float64" title="numpy.float64"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.float64</span></code></a>
+| <a class="reference internal" href="thirdparty.html#numpy.float128" title="numpy.float128"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.float128</span></code></a></p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.INT_TYPES">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread._vendor.kwparse.</span></span><span class="sig-name descname"><span class="pre">INT_TYPES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;class</span> <span class="pre">'int'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.int8'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.int16'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.int32'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.int64'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.uint8'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.uint16'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.uint32'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.uint64'&gt;)</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.INT_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collection of integer (including unsigned) types:
+<a class="reference internal" href="python.html#int" title="int"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>
+| <a class="reference internal" href="thirdparty.html#numpy.int8" title="numpy.int8"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.int8</span></code></a>
+| <a class="reference internal" href="thirdparty.html#numpy.int16" title="numpy.int16"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.int16</span></code></a>
+| <a class="reference internal" href="thirdparty.html#numpy.int32" title="numpy.int32"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.int32</span></code></a>
+| <a class="reference internal" href="thirdparty.html#numpy.int64" title="numpy.int64"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.int64</span></code></a>
+| <a class="reference internal" href="thirdparty.html#numpy.uint8" title="numpy.uint8"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.uint8</span></code></a>
+| <a class="reference internal" href="thirdparty.html#numpy.uint16" title="numpy.uint16"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.uint16</span></code></a>
+| <a class="reference internal" href="thirdparty.html#numpy.uint32" title="numpy.uint32"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.uint32</span></code></a>
+| <a class="reference internal" href="thirdparty.html#numpy.uint64" title="numpy.uint64"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.uint64</span></code></a></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KWKeyError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread._vendor.kwparse.</span></span><span class="sig-name descname"><span class="pre">KWKeyError</span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KWKeyError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Errors for missing keys raised by <code class="xref py py-mod docutils literal notranslate"><span class="pre">kwparse</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KWNameError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread._vendor.kwparse.</span></span><span class="sig-name descname"><span class="pre">KWNameError</span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KWNameError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Errors for incorrect names raised by <code class="xref py py-mod docutils literal notranslate"><span class="pre">kwparse</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KWParseError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread._vendor.kwparse.</span></span><span class="sig-name descname"><span class="pre">KWParseError</span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KWParseError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parent error class for <code class="xref py py-mod docutils literal notranslate"><span class="pre">kwparse</span></code> errors</p>
+<p>Inherts from <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code> and enables general catching of all
+errors raised by <code class="xref py py-mod docutils literal notranslate"><span class="pre">kwparse</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KWTypeError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread._vendor.kwparse.</span></span><span class="sig-name descname"><span class="pre">KWTypeError</span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KWTypeError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Errors for incorrect type raised by <code class="xref py py-mod docutils literal notranslate"><span class="pre">kwparse</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.KWValueError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread._vendor.kwparse.</span></span><span class="sig-name descname"><span class="pre">KWValueError</span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.KWValueError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Errors for invalid values raised by <code class="xref py py-mod docutils literal notranslate"><span class="pre">kwparse</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.OptPair">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread._vendor.kwparse.</span></span><span class="sig-name descname"><span class="pre">OptPair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.OptPair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Option name/value pair</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.OptPair.opt">
+<span class="sig-name descname"><span class="pre">opt</span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.OptPair.opt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.OptPair.val">
+<span class="sig-name descname"><span class="pre">val</span></span><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.OptPair.val" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="lfc._vendor.argread._vendor.kwparse.STR_TYPES">
+<span class="sig-prename descclassname"><span class="pre">lfc._vendor.argread._vendor.kwparse.</span></span><span class="sig-name descname"><span class="pre">STR_TYPES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.str_'&gt;)</span></em><a class="headerlink" href="#lfc._vendor.argread._vendor.kwparse.STR_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collection of string-like types:
+<a class="reference internal" href="python.html#str" title="str"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference internal" href="thirdparty.html#numpy.str_" title="numpy.str_"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.str_</span></code></a></p>
+</dd></dl>
+
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/NASA_logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="argread/clitext.html"
+                          title="previous chapter"><code class="docutils literal notranslate"><span class="pre">argread.clitext</span></code>: Process help messages for console output</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="gitutils/index.html"
+                          title="next chapter"><code class="docutils literal notranslate"><span class="pre">gitutils</span></code>: Python interface to git repositories</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/kwparse.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="gitutils/index.html" title="gitutils: Python interface to git repositories"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="argread/clitext.html" title="argread.clitext: Process help messages for console output"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">lfc</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">kwparse</span></code>: Tools to map, parse, and validate keyword arguments</a></li> 
+      </ul>
+    </div>
+
+  <div class="footer">
+    <i> Ames SLS CFD Team </i>
+  </div>
+
+
+  </body>
+</html>
