@@ -11,3 +11,6 @@ is (hopefully) at
 
     https://nasa.github.io/lfc-doc
 
+This documentation serves as the primary user manual for Large File Control
+(LFC).
+
